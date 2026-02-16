@@ -105,7 +105,7 @@
     <!-- WALLET MODAL -->
     <div class="overlay" id="walletOv" onclick="closeWallet()"></div>
     <div class="modal wallet-modal" id="walletMod">
-        <div class="wallet-header"><h3>ENTRA NELLA FAMIGLIA</h3><p>Connect your wallet to join the family</p></div>
+        <div class="wallet-header"><h3>JOIN THE FAMILY</h3><p>Entra nella famiglia</p></div>
         <div class="wallet-body">
             <div class="wallet-options">
                 <button class="wallet-btn" onclick="connectWallet('phantom')"><span class="wallet-icon">👻</span>Phantom</button>
@@ -116,7 +116,7 @@
                 <button class="wallet-btn" onclick="connectWallet('coinbase')"><span class="wallet-icon">🔷</span>Coinbase Wallet</button>
             </div>
             <div class="wallet-status" id="walletStatus"></div>
-            <button class="btn-ghost" onclick="closeWallet()" style="width:100%;margin-top:15px">CHIUDI</button>
+            <button class="btn-ghost" onclick="closeWallet()" style="width:100%;margin-top:15px">CLOSE</button>
         </div>
     </div>
 
@@ -124,8 +124,8 @@
     <div class="overlay" id="shopOv" onclick="closeShop()"></div>
     <div class="modal shop-modal" id="shopMod">
         <div class="shop-header">
-            <h2>Il Mercato Nero</h2>
-            <p>— The Black Market —</p>
+            <h2>The Black Market</h2>
+            <p>— Il Mercato Nero —</p>
         </div>
         <div class="shop-body">
             <div class="shop-balance">YOUR BALANCE: <span id="shopBal">$50,000</span></div>
@@ -134,15 +134,15 @@
                 <div class="shop-item-top">
                     <div class="shop-item-icon">🎰</div>
                     <div class="shop-item-info">
-                        <h4>La Corona d'Oro</h4>
-                        <p>The Golden Crown Casino</p>
+                        <h4>The Golden Crown Casino</h4>
+                        <p>La Corona d'Oro</p>
                     </div>
                 </div>
                 <div class="shop-item-desc">A high-stakes casino where fortunes are won and lost. Poker tables, slot machines, and VIP lounges — the crown jewel of your empire.</div>
                 <div class="shop-item-stats">
                     <div class="shop-item-stat"><span class="label">PRICE</span><span class="val">$25K</span></div>
                     <div class="shop-item-stat"><span class="label">INCOME</span><span class="val">$500/h</span></div>
-                    <div class="shop-item-stat"><span class="label">RISK</span><span class="val" style="color:#ff6347">ALTO</span></div>
+                    <div class="shop-item-stat"><span class="label">RISK</span><span class="val" style="color:#ff6347">HIGH</span></div>
                 </div>
             </div>
 
@@ -151,8 +151,8 @@
                 <div class="shop-item-top">
                     <div class="shop-item-icon">🍸</div>
                     <div class="shop-item-info">
-                        <h4>Ombra Nera</h4>
-                        <p>The Dark Shadow Lounge</p>
+                        <h4>The Dark Shadow Lounge</h4>
+                        <p>Ombra Nera</p>
                     </div>
                 </div>
                 <div class="shop-item-stats">
@@ -166,8 +166,8 @@
                 <div class="shop-item-top">
                     <div class="shop-item-icon">🏨</div>
                     <div class="shop-item-info">
-                        <h4>Il Palazzo</h4>
-                        <p>The Palace Hotel</p>
+                        <h4>The Palace Hotel</h4>
+                        <p>Il Palazzo</p>
                     </div>
                 </div>
                 <div class="shop-item-stats">
@@ -177,8 +177,8 @@
             </div>
 
             <div class="shop-footer">
-                <button class="btn-gold" id="buyBtn" onclick="enterPlacement()">PIAZZA — PLACE</button>
-                <button class="btn-ghost" onclick="closeShop()">CHIUDI</button>
+                <button class="btn-gold" id="buyBtn" onclick="enterPlacement()">PLACE CASINO</button>
+                <button class="btn-ghost" onclick="closeShop()">CANCEL</button>
             </div>
         </div>
     </div>
@@ -188,16 +188,16 @@
         <canvas id="cv"></canvas>
         <div style="position:absolute;inset:0;pointer-events:none">
             <div class="hud">
-                <div class="hud-title">La Famiglia</div>
-                <div class="hud-row"><span>💰 Soldi</span><span>$<span id="hMoney">50,000</span></span></div>
+                <div class="hud-title">The Family <span style="font-family:'Cormorant Garamond',serif;font-size:.8rem;opacity:.5;font-style:italic;display:block;margin-top:2px">La Famiglia</span></div>
+                <div class="hud-row"><span>💰 Money</span><span>$<span id="hMoney">50,000</span></span></div>
                 <div class="hud-div"></div>
-                <div class="hud-row"><span>🎰 Casinò</span><span id="hCount">0</span></div>
-                <div class="hud-row"><span>💵 Reddito/h</span><span>$<span id="hIncome">0</span></span></div>
+                <div class="hud-row"><span>🎰 Casinos</span><span id="hCount">0</span></div>
+                <div class="hud-row"><span>💵 Income/h</span><span>$<span id="hIncome">0</span></span></div>
                 <div class="hud-div"></div>
-                <button class="hud-btn" onclick="openShop()">IL MERCATO NERO</button>
+                <button class="hud-btn" onclick="openShop()">THE BLACK MARKET</button>
             </div>
-            <div class="minimap-wrap"><canvas id="mm" width="200" height="200" style="display:block"></canvas><div class="minimap-label">MAPPA</div></div>
-            <div class="ctrl"><div class="ctrl-t">CONTROLLI</div><div>🖱️ Left Click — Move</div><div>🏢 Shop — Buy & Place</div><div>🔍 Scroll — Zoom</div></div>
+            <div class="minimap-wrap"><canvas id="mm" width="200" height="200" style="display:block"></canvas><div class="minimap-label">MAP</div></div>
+            <div class="ctrl"><div class="ctrl-t">CONTROLS</div><div>🖱️ Left Click — Move</div><div>🏢 Shop — Buy & Place</div><div>🔍 Scroll — Zoom</div></div>
         </div>
     </div>
 
@@ -210,7 +210,7 @@
     let placeGlow=null,placeInner=null,placeArrows=[];
     let wp=null,wpArr=[];
     const PRICE=25000,INCOME=500;
-    const GLB='https://raw.githubusercontent.com/Strawrfsa/famiglia-assets/main/harlem_casino.glb';
+    const GLB_BASE='https://raw.githubusercontent.com/Strawrfsa/famiglia-assets/main/';
 
     function toast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
     function openWallet(){document.getElementById('walletMod').classList.add('active');document.getElementById('walletOv').classList.add('active')}
@@ -269,8 +269,8 @@
     function placeCasino(pos){
         if(money<PRICE){toast('NOT ENOUGH MONEY!');return}
         money-=PRICE;exitPlacement();
-        loader.load(GLB,g=>{
-            const m=g.scene.clone();m.position.set(pos.x,0,pos.z);m.scale.set(.5,.5,.5);
+        loader.load(GLB_BASE+'harlem_casino.glb',g=>{
+            const m=g.scene.clone();m.position.set(pos.x,0,pos.z);m.scale.set(.5,.5,.5);m.rotation.y=Math.PI;
             m.traverse(c=>{if(c.isMesh){c.castShadow=true;c.receiveShadow=true}});
             scene.add(m);casinos.push({model:m,pos});updateUI();toast("LA CORONA D'ORO — ESTABLISHED");
         },undefined,()=>{
@@ -300,21 +300,112 @@
 
     window.addEventListener('load',()=>{
         const cv=document.getElementById('cv');
-        scene=new THREE.Scene();scene.background=new THREE.Color(0x080808);scene.fog=new THREE.FogExp2(0x080808,.015);
-        camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,500);
+        scene=new THREE.Scene();scene.background=new THREE.Color(0x080808);scene.fog=new THREE.FogExp2(0x080808,.005);
+        camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,800);
         camera.position.set(0,camDist,22);camera.lookAt(0,0,0);
         renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
         renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
         renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.4;
         loader=new THREE.GLTFLoader();
 
-        // === LIGHTS (limited to avoid MAX_TEXTURE_IMAGE_UNITS) ===
-        scene.add(new THREE.AmbientLight(0xffeedd,.35));
+        // === SKY DOME ===
+        const skyGeo=new THREE.SphereGeometry(300,32,16);
+        const skyMat=new THREE.ShaderMaterial({
+            uniforms:{uTime:{value:0},uSunPos:{value:new THREE.Vector3(0,.3,1)}},
+            vertexShader:`varying vec3 vPos;void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}`,
+            fragmentShader:`
+                uniform float uTime;uniform vec3 uSunPos;varying vec3 vPos;
+                void main(){
+                    vec3 dir=normalize(vPos);float h=dir.y*.5+.5;
+                    float sunY=sin(uTime*.05);
+                    vec3 dayTop=vec3(.15,.25,.55);vec3 dayBot=vec3(.6,.5,.35);
+                    vec3 sunsetTop=vec3(.15,.08,.2);vec3 sunsetBot=vec3(.7,.25,.1);
+                    vec3 nightTop=vec3(.05,.05,.12);vec3 nightBot=vec3(.08,.07,.12);
+                    float dayF=smoothstep(-.2,.3,sunY);float sunsetF=smoothstep(-.3,0.,sunY)*smoothstep(.3,0.,sunY);
+                    vec3 top=mix(nightTop,dayTop,dayF)+sunsetTop*sunsetF;
+                    vec3 bot=mix(nightBot,dayBot,dayF)+sunsetBot*sunsetF;
+                    vec3 col=mix(bot,top,h);
+                    // Sun glow
+                    vec3 sunDir=normalize(vec3(cos(uTime*.05)*.8,sunY,sin(uTime*.05)*.8));
+                    float sunDot=max(dot(dir,sunDir),0.);
+                    col+=vec3(1.,.7,.3)*pow(sunDot,64.)*.8;
+                    col+=vec3(1.,.5,.2)*pow(sunDot,8.)*.3;
+                    // Stars at night
+                    float nightF=1.-dayF;
+                    float star=step(.998,fract(sin(dot(floor(dir*300.),vec3(12.9898,78.233,45.164)))*43758.5453));
+                    col+=vec3(1.)*star*nightF*.6;
+                    gl_FragColor=vec4(col,1.);
+                }`,
+            side:THREE.BackSide
+        });
+        const sky=new THREE.Mesh(skyGeo,skyMat);scene.add(sky);
+
+        // === OUTER LANDSCAPE (beyond playable area) ===
+        const outerGround=new THREE.Mesh(new THREE.PlaneGeometry(600,600),new THREE.MeshStandardMaterial({color:0x1a1a12,roughness:1,metalness:0}));
+        outerGround.rotation.x=-Math.PI/2;outerGround.position.y=-.05;outerGround.name='g';scene.add(outerGround);
+        // === TRAFFIC CARS (drive along CENTER HORIZONTAL street only, z=0) ===
+        const trafficCars=[];
+        const trafficMat=[
+            new THREE.MeshStandardMaterial({color:0x8B0000,metalness:.85,roughness:.15}),
+            new THREE.MeshStandardMaterial({color:0x050505,metalness:.9,roughness:.1}),
+            new THREE.MeshStandardMaterial({color:0x2F4F4F,metalness:.85,roughness:.15}),
+            new THREE.MeshStandardMaterial({color:0x888888,metalness:.9,roughness:.1})
+        ];
+        const hlMat=new THREE.MeshStandardMaterial({color:0xffffcc,emissive:0xffffcc,emissiveIntensity:.6});
+        const tlMat=new THREE.MeshStandardMaterial({color:0xff0000,emissive:0xff0000,emissiveIntensity:.4});
+        function spawnTrafficCar(){
+            const c=new THREE.Group();const cm=trafficMat[~~(Math.random()*trafficMat.length)];
+            c.add(M(new THREE.BoxGeometry(1.8,.7,4.2),cm,0,.4,0,true));
+            c.add(M(new THREE.BoxGeometry(1.5,.55,1.8),cm,0,1,-.3));
+            [[-0.65,.4,2.15],[.65,.4,2.15]].forEach(([hx,hy,hz])=>{c.add(M(new THREE.SphereGeometry(.1,6,6),hlMat,hx,hy,hz))});
+            [[-0.65,.4,-2.15],[.65,.4,-2.15]].forEach(([tx,ty,tz])=>{c.add(M(new THREE.SphereGeometry(.08,6,6),tlMat,tx,ty,tz))});
+            // Always horizontal center street (z=0), random lane
+            const lane=Math.random()>.5?1.3:-1.3;
+            const dir=Math.random()>.5?1:-1;
+            const speed=.06+Math.random()*.04;
+            c.position.set(dir*-80,0,lane);
+            c.rotation.y=dir>0?Math.PI/2:-Math.PI/2;
+            scene.add(c);
+            trafficCars.push({mesh:c,axis:'x',speed:speed*dir,life:0,maxLife:160/speed});
+        }
+
+        // === STATIC GLB CARS (parked around zone) ===
+        const CAR_SCALE=.08;
+        const carFiles=['car.glb','car2.glb','car3.glb','car4.glb'];
+        // 4 inside zone, avoid streets
+        function onStreet(x,z){for(let i=-2;i<=2;i++){if(Math.abs(z-i*16)<3.5)return true;if(Math.abs(x-i*16)<3.5)return true}return false}
+        const innerSpots=[];
+        while(innerSpots.length<4){const x=(Math.random()-.5)*80,z=(Math.random()-.5)*80;if(!onStreet(x,z)&&Math.abs(x)<42&&Math.abs(z)<42)innerSpots.push({x,z,ry:Math.random()*Math.PI*2})}
+        // 12 outside zone
+        const outerSpots=[];
+        for(let i=0;i<12;i++){const a=Math.random()*Math.PI*2,d=52+Math.random()*50;outerSpots.push({x:Math.cos(a)*d,z:Math.sin(a)*d,ry:Math.random()*Math.PI*2})}
+        const allSpots=[...innerSpots,...outerSpots];
+        carFiles.forEach((name,idx)=>{
+            loader.load(GLB_BASE+name,g=>{
+                allSpots.filter((_,i)=>i%4===idx).forEach(p=>{
+                    const car=g.scene.clone();car.position.set(p.x,0,p.z);car.rotation.y=p.ry;
+                    car.scale.set(CAR_SCALE,CAR_SCALE,CAR_SCALE);
+                    car.traverse(c=>{if(c.isMesh){c.castShadow=true;c.receiveShadow=true}});
+                    scene.add(car)});
+            },undefined,()=>{
+                // Fallback box car
+                allSpots.filter((_,i)=>i%4===idx).forEach(p=>{
+                    const c=new THREE.Group();const cm=trafficMat[idx%trafficMat.length];
+                    c.add(M(new THREE.BoxGeometry(1.8,.7,4),cm,0,.4,0,true));
+                    c.add(M(new THREE.BoxGeometry(1.5,.55,1.8),cm,0,1,-.3));
+                    c.position.set(p.x,0,p.z);c.rotation.y=p.ry;scene.add(c)})});
+        });
+
+        // === BOUNDARY (invisible) ===
+        function M(geo,mat,x,y,z,shadow){const m=new THREE.Mesh(geo,mat);m.position.set(x,y,z);if(shadow)m.castShadow=true;return m}
+
+        // === LIGHTS ===
+        const ambient=new THREE.AmbientLight(0xffeedd,.35);scene.add(ambient);
         const sun=new THREE.DirectionalLight(0xffd080,.8);sun.position.set(15,35,15);sun.castShadow=true;
         sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-50;sun.shadow.camera.right=50;
         sun.shadow.camera.top=50;sun.shadow.camera.bottom=-50;scene.add(sun);
-        scene.add(new THREE.DirectionalLight(0x6666aa,.12)).position.set(-20,40,-20);
+        const moon=new THREE.DirectionalLight(0x8888cc,.25);moon.position.set(-20,40,-20);scene.add(moon);
         // Only 4 accent lights total
         const sl=new THREE.SpotLight(0x8B0000,.5);sl.position.set(-25,20,-25);sl.angle=Math.PI/5;sl.penumbra=.7;scene.add(sl);
         const sl2=new THREE.SpotLight(0xD4AF37,.4);sl2.position.set(25,20,25);sl2.angle=Math.PI/5;sl2.penumbra=.7;scene.add(sl2);
@@ -346,7 +437,7 @@
 
         // === LAMP POSTS (visual only, NO extra lights — using emissive heads) ===
         const lpM=new THREE.MeshStandardMaterial({color:0x222,metalness:.9,roughness:.1});
-        const lhM=new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffd700,emissiveIntensity:4});
+        const lhM=new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffd700,emissiveIntensity:6});
         // Only add 2 actual PointLights for key areas, rest are emissive-only
         let lightCount=0;
         for(let x=-40;x<=40;x+=16)for(let z=-40;z<=40;z+=16){
@@ -356,7 +447,7 @@
                 const arm=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.5,4),lpM);arm.rotation.z=Math.PI/2;arm.position.set(lx+.6,8.8,lz);scene.add(arm);
                 const h=new THREE.Mesh(new THREE.SphereGeometry(.3,8,8),lhM);h.position.set(lx+1.2,8.8,lz);scene.add(h);
                 // Only first 4 lamps get real lights
-                if(lightCount<4){const lt=new THREE.PointLight(0xffd080,.8,20,2);lt.position.set(lx+1.2,8.5,lz);scene.add(lt);lightCount++}
+                if(lightCount<6){const lt=new THREE.PointLight(0xffd080,1,25,2);lt.position.set(lx+1.2,8.5,lz);scene.add(lt);lightCount++}
             }}
 
         // === DECOR ===
@@ -366,33 +457,41 @@
             const bk=new THREE.Mesh(new THREE.BoxGeometry(2,.6,.08),wM);bk.position.set(0,.36,-.22);b.add(bk);
             b.position.set((Math.random()-.5)*75,.25,(Math.random()-.5)*75);b.rotation.y=Math.random()*Math.PI;scene.add(b)}
         for(let i=0;i<10;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(.25,.3,.7,8),mM);t.position.set((Math.random()-.5)*75,.35,(Math.random()-.5)*75);scene.add(t)}
-        // Cars
-        const cc=[0x8B0000,0x050505,0x2F4F4F,0x777,0x1a1a3a];
-        for(let i=0;i<6;i++){const c=new THREE.Group();const cm=new THREE.MeshStandardMaterial({color:cc[~~(Math.random()*cc.length)],metalness:.9,roughness:.1});
-            c.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.8,.7,4),cm),{position:new THREE.Vector3(0,.4,0),castShadow:true}));
-            c.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.5,.55,1.8),cm),{position:new THREE.Vector3(0,1,-.3)}));
-            const hlm=new THREE.MeshStandardMaterial({color:0xffffcc,emissive:0xffffcc,emissiveIntensity:.4});
-            [[-0.65,.38,2],[.65,.38,2]].forEach(([hx,hy,hz])=>{c.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.1,6,6),hlm),{position:new THREE.Vector3(hx,hy,hz)}))});
-            c.position.set((Math.random()-.5)*70,0,(Math.random()-.5)*70);c.rotation.y=Math.random()*Math.PI*2;scene.add(c)}
-        // Hydrants
-        for(let i=0;i<5;i++){const hm=new THREE.MeshStandardMaterial({color:0xcc0000,roughness:.6});
-            const h=new THREE.Group();h.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.55,8),hm),{position:new THREE.Vector3(0,.28,0)}));
-            h.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.15,8,8),hm),{position:new THREE.Vector3(0,.58,0)}));
-            h.position.set((Math.random()-.5)*65,0,(Math.random()-.5)*65);scene.add(h)}
 
         // === PLAYER ===
         player=new THREE.Group();const bM=new THREE.MeshStandardMaterial({color:0x111,roughness:.5,metalness:.1});
-        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.36,.46,1.15,8),bM),{position:new THREE.Vector3(0,.58,0),castShadow:true}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1,.18,.45),bM),{position:new THREE.Vector3(0,1.1,0)}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.27,16,16),new THREE.MeshStandardMaterial({color:0xFFDBB5,roughness:.8})),{position:new THREE.Vector3(0,1.45,0)}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.04,16),new THREE.MeshStandardMaterial({color:0x111})),{position:new THREE.Vector3(0,1.63,0)}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.2,.26,.3,16),new THREE.MeshStandardMaterial({color:0x111})),{position:new THREE.Vector3(0,1.82,0)}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.265,.265,.05,16),new THREE.MeshStandardMaterial({color:0xD4AF37,metalness:.8,roughness:.2})),{position:new THREE.Vector3(0,1.69,0)}));
-        player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(.09,.45,.04),new THREE.MeshStandardMaterial({color:0xD4AF37,emissive:0xD4AF37,emissiveIntensity:.3,metalness:.8})),{position:new THREE.Vector3(0,.78,.4)}));
+        player.add(M(new THREE.CylinderGeometry(.36,.46,1.15,8),bM,0,.58,0,true));
+        player.add(M(new THREE.BoxGeometry(1,.18,.45),bM,0,1.1,0));
+        player.add(M(new THREE.SphereGeometry(.27,16,16),new THREE.MeshStandardMaterial({color:0xFFDBB5,roughness:.8}),0,1.45,0));
+        player.add(M(new THREE.CylinderGeometry(.42,.42,.04,16),new THREE.MeshStandardMaterial({color:0x111}),0,1.63,0));
+        player.add(M(new THREE.CylinderGeometry(.2,.26,.3,16),new THREE.MeshStandardMaterial({color:0x111}),0,1.82,0));
+        player.add(M(new THREE.CylinderGeometry(.265,.265,.05,16),new THREE.MeshStandardMaterial({color:0xD4AF37,metalness:.8,roughness:.2}),0,1.69,0));
+        player.add(M(new THREE.BoxGeometry(.09,.45,.04),new THREE.MeshStandardMaterial({color:0xD4AF37,emissive:0xD4AF37,emissiveIntensity:.3,metalness:.8}),0,.78,.4));
         const lM=new THREE.MeshStandardMaterial({color:0x111});
-        [-.14,.14].forEach(x=>{player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.75,8),lM),{position:new THREE.Vector3(x,.38,0)}))});
+        [-.14,.14].forEach(x=>{player.add(M(new THREE.CylinderGeometry(.13,.13,.75,8),lM,x,.38,0))});
         const sM=new THREE.MeshStandardMaterial({color:0x080808,metalness:.7,roughness:.3});
-        [-.14,.14].forEach(x=>{player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(.18,.09,.28),sM),{position:new THREE.Vector3(x,0,.04)}))});
+        [-.14,.14].forEach(x=>{player.add(M(new THREE.BoxGeometry(.18,.09,.28),sM,x,0,.04))});
+        // === TOMMY GUN ===
+        const gunMat=new THREE.MeshStandardMaterial({color:0x222,metalness:.8,roughness:.2});
+        const woodMat2=new THREE.MeshStandardMaterial({color:0x3a1a08,roughness:.8,metalness:.05});
+        const gunGroup=new THREE.Group();
+        // Barrel
+        gunGroup.add(M(new THREE.CylinderGeometry(.03,.03,.9,8),gunMat,0,0,.45));
+        gunGroup.children[0].rotation.x=Math.PI/2;
+        // Body
+        gunGroup.add(M(new THREE.BoxGeometry(.12,.1,.5),gunMat,0,0,.1));
+        // Drum magazine
+        gunGroup.add(M(new THREE.CylinderGeometry(.1,.1,.12,12),gunMat,0,-.08,.05));
+        // Stock
+        gunGroup.add(M(new THREE.BoxGeometry(.08,.08,.35),woodMat2,0,.01,-.25));
+        // Grip
+        gunGroup.add(M(new THREE.BoxGeometry(.06,.12,.04),woodMat2,0,-.06,-.05));
+        // Muzzle flash point (for future use)
+        const muzzle=new THREE.Mesh(new THREE.SphereGeometry(.02,4,4),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:0}));
+        muzzle.position.set(0,0,.9);gunGroup.add(muzzle);
+        gunGroup.position.set(.45,.85,.15);
+        gunGroup.rotation.set(0,0,-.15);
+        player.add(gunGroup);
         scene.add(player);
         const mk=new THREE.Mesh(new THREE.RingGeometry(.65,.95,32),new THREE.MeshBasicMaterial({color:0xD4AF37,side:THREE.DoubleSide,transparent:true,opacity:.6}));
         mk.rotation.x=-Math.PI/2;mk.position.y=.05;scene.add(mk);player.mk=mk;
@@ -400,11 +499,13 @@
         gl.rotation.x=-Math.PI/2;gl.position.y=.03;scene.add(gl);player.gl=gl;
 
         // === CONTROLS ===
+        const PLIM=44;
         const ray=new THREE.Raycaster(),mo=new THREE.Vector2();
         function gp(e){mo.x=(e.clientX/innerWidth)*2-1;mo.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(mo,camera);
             const h=ray.intersectObjects(scene.children.filter(o=>o.name==='g'));return h.length?h[0].point:null}
         cv.addEventListener('click',e=>{if(!gameActive)return;const pt=gp(e);if(!pt)return;
-            if(placing){placeCasino({x:pt.x,z:pt.z})}else{target={x:pt.x,z:pt.z};moving=true;makeWP(pt)}});
+            const cx=Math.max(-PLIM,Math.min(PLIM,pt.x)),cz=Math.max(-PLIM,Math.min(PLIM,pt.z));
+            if(placing){placeCasino({x:cx,z:cz})}else{target={x:cx,z:cz};moving=true;makeWP({x:cx,y:.1,z:cz})}});
         cv.addEventListener('contextmenu',e=>{e.preventDefault();if(placing)exitPlacement()});
         cv.addEventListener('mousemove',e=>{if(!placing||!placeGlow)return;const pt=gp(e);if(!pt)return;
             placeGlow.position.set(pt.x,.1,pt.z);placeInner.position.set(pt.x,.08,pt.z);
@@ -413,8 +514,22 @@
 
         // === ANIMATE ===
         (function run(){if(!gameActive)return;requestAnimationFrame(run);const t=Date.now()*.001;
+            // Day/night cycle
+            const sunY=Math.sin(t*.05);
+            skyMat.uniforms.uTime.value=t;
+            const dayF=Math.max(0,Math.min(1,(sunY+.2)/.5));
+            ambient.intensity=.3+dayF*.25;
+            sun.intensity=.4+dayF*.5;
+            moon.intensity=.15+(.4-dayF*.3);
+            sun.position.set(Math.cos(t*.05)*40,15+sunY*25,Math.sin(t*.05)*40);
+            const fogC=new THREE.Color().lerpColors(new THREE.Color(0x0a0a12),new THREE.Color(0x1a1815),dayF);
+            scene.fog.color.copy(fogC);
+
             if(moving&&target){const dx=target.x-player.position.x,dz=target.z-player.position.z,d=Math.sqrt(dx*dx+dz*dz);
                 if(d>.5){player.position.x+=(dx/d)*.22;player.position.z+=(dz/d)*.22;
+                    // Clamp to bounds
+                    player.position.x=Math.max(-PLIM,Math.min(PLIM,player.position.x));
+                    player.position.z=Math.max(-PLIM,Math.min(PLIM,player.position.z));
                     player.mk.position.set(player.position.x,.05,player.position.z);
                     player.gl.position.set(player.position.x,.03,player.position.z);
                     player.rotation.y=Math.atan2(dx,dz);player.position.y=Math.sin(t*8)*.08;
@@ -429,6 +544,13 @@
                 const s=1+Math.sin(t*2)*.05;placeGlow.scale.set(s,s,s);
                 placeArrows.forEach((a,i)=>{a.material.opacity=.5+Math.sin(t*4+i)*.3})}
             if(wp){wp.material.opacity=.5+Math.sin(t*5)*.3;wpArr.forEach((a,i)=>{a.material.opacity=.4+Math.sin(t*5+i*.5)*.3})}
+            // Traffic cars
+            for(let i=trafficCars.length-1;i>=0;i--){
+                const tc=trafficCars[i];tc.mesh.position[tc.axis]+=tc.speed;tc.life++;
+                if(tc.life>tc.maxLife){scene.remove(tc.mesh);trafficCars.splice(i,1)}
+            }
+            // Spawn new cars occasionally
+            if(Math.random()<.0005&&trafficCars.length<1) spawnTrafficCar();
             // Minimap
             const mc=document.getElementById('mm');if(mc){const ctx=mc.getContext('2d'),sz=200,ms=100;
                 ctx.fillStyle='#080808';ctx.fillRect(0,0,sz,sz);
