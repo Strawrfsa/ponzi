@@ -4,814 +4,454 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAMIGLIA - Mafia Empire on Solana</title>
-    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;600;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;600;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        :root{--blood-red:#8B0000;--gold:#D4AF37;--dark-gold:#9B7E2B;--cream:#F5E6D3;--black:#0A0A0A;--grey:#1A1A1A;--smoke:#2A2A2A;--wine:#4A0E23}
+        body{font-family:'Crimson Text',serif;background:var(--black);color:var(--cream);overflow:hidden;
+            cursor:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="10" cy="10" r="8" fill="rgba(212,175,55,0.3)" stroke="%23D4AF37" stroke-width="1"/></svg>'),auto}
+        body::before{content:'';position:fixed;inset:0;background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');pointer-events:none;z-index:9999;mix-blend-mode:overlay}
+        body::after{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 0%,rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:9998}
 
-        :root {
-            --blood-red: #8B0000;
-            --gold: #D4AF37;
-            --dark-gold: #9B7E2B;
-            --cream: #F5E6D3;
-            --black: #0A0A0A;
-            --grey: #1A1A1A;
-            --smoke: #2A2A2A;
-        }
+        .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:10000;backdrop-filter:blur(4px)}
+        .overlay.active{display:block}
+        .modal{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.9);z-index:10001;opacity:0;transition:all .4s cubic-bezier(.16,1,.3,1)}
+        .modal.active{display:block;transform:translate(-50%,-50%) scale(1);opacity:1}
 
-        body {
-            font-family: 'Crimson Text', serif;
-            background: var(--black);
-            color: var(--cream);
-            overflow: hidden;
-        }
+        /* Wallet */
+        .wallet-modal{min-width:420px;background:linear-gradient(145deg,rgba(26,26,26,.99),rgba(15,10,5,.99));border:2px solid var(--gold);border-radius:2px;box-shadow:0 0 80px rgba(212,175,55,.15)}
+        .wallet-header{background:linear-gradient(135deg,var(--blood-red),var(--wine));padding:25px 35px;border-bottom:2px solid var(--gold)}
+        .wallet-header h3{font-family:'Cinzel',serif;color:var(--gold);font-size:1.6rem;letter-spacing:3px}
+        .wallet-header p{color:rgba(245,230,211,.6);font-size:.85rem;margin-top:5px;font-style:italic}
+        .wallet-body{padding:25px 35px 30px}
+        .wallet-options{display:flex;flex-direction:column;gap:10px}
+        .wallet-btn{font-family:'Cinzel',serif;background:linear-gradient(135deg,rgba(42,42,42,.8),rgba(26,26,26,.9));color:var(--cream);border:1px solid rgba(212,175,55,.3);padding:14px 20px;font-size:1rem;cursor:pointer;transition:all .3s;display:flex;align-items:center;gap:15px;letter-spacing:1px;border-radius:2px}
+        .wallet-btn:hover{background:linear-gradient(135deg,var(--gold),var(--dark-gold));color:var(--black);transform:translateX(5px);border-color:var(--gold)}
+        .wallet-icon{font-size:1.4rem;width:30px;text-align:center}
+        .wallet-status{color:var(--gold);font-size:.9rem;text-align:center;margin-top:15px;min-height:20px}
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: overlay;
-        }
+        /* Shop */
+        .shop-modal{min-width:520px;max-width:560px;background:linear-gradient(160deg,rgba(16,12,8,.99),rgba(10,8,5,.99));border:2px solid var(--gold);border-radius:2px;box-shadow:0 0 100px rgba(212,175,55,.12),0 30px 60px rgba(0,0,0,.8)}
+        .shop-header{position:relative;background:linear-gradient(135deg,#1a0a00,#0a0500);padding:28px 35px;border-bottom:2px solid var(--gold);overflow:hidden}
+        .shop-header::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(45deg,transparent,transparent 10px,rgba(212,175,55,.03) 10px,rgba(212,175,55,.03) 20px)}
+        .shop-header h2{font-family:'Pirata One',cursive;color:var(--gold);font-size:2.2rem;text-align:center;text-shadow:0 0 30px rgba(212,175,55,.4);position:relative}
+        .shop-header p{font-family:'Cormorant Garamond',serif;color:rgba(245,230,211,.5);text-align:center;margin-top:4px;font-style:italic;letter-spacing:3px;position:relative}
+        .shop-body{padding:25px 30px 30px}
 
-        body::after {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%);
-            pointer-events: none;
-            z-index: 9998;
-        }
+        .shop-item{background:linear-gradient(135deg,rgba(42,32,20,.5),rgba(26,20,14,.6));border:1px solid rgba(212,175,55,.25);border-radius:3px;padding:20px;margin-bottom:20px;cursor:pointer;transition:all .3s;position:relative;overflow:hidden}
+        .shop-item:hover{border-color:var(--gold);box-shadow:0 0 25px rgba(212,175,55,.15);transform:translateY(-2px)}
+        .shop-item.selected{border-color:var(--gold);box-shadow:0 0 30px rgba(212,175,55,.25)}
+        .shop-item.selected::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(212,175,55,.08),transparent);pointer-events:none}
+        .shop-item-top{display:flex;align-items:center;gap:15px;margin-bottom:12px}
+        .shop-item-icon{font-size:2.5rem;width:55px;height:55px;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.4);border:1px solid rgba(212,175,55,.2);border-radius:3px}
+        .shop-item-info h4{font-family:'Cinzel',serif;color:var(--gold);font-size:1.15rem;letter-spacing:1px}
+        .shop-item-info p{font-family:'Cormorant Garamond',serif;color:rgba(245,230,211,.5);font-size:.9rem;font-style:italic;margin-top:2px}
+        .shop-item-desc{font-family:'Cormorant Garamond',serif;color:var(--cream);line-height:1.7;font-size:1.05rem;border-left:3px solid var(--blood-red);padding-left:14px;margin-bottom:15px;opacity:.85}
+        .shop-item-stats{display:flex;gap:20px}
+        .shop-item-stat{display:flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:.85rem}
+        .shop-item-stat .label{color:rgba(212,175,55,.6);letter-spacing:1px}
+        .shop-item-stat .val{color:var(--gold);font-weight:700;font-size:1rem}
 
-        #loadingScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            transition: opacity 0.5s;
-        }
+        .shop-footer{display:flex;gap:15px;margin-top:5px}
+        .shop-balance{font-family:'Cinzel',serif;color:rgba(212,175,55,.7);font-size:.85rem;letter-spacing:1px;margin-bottom:15px;text-align:center}
+        .shop-balance span{color:var(--gold);font-size:1.1rem;font-weight:700}
 
-        #loadingScreen.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
+        .btn-gold{flex:1;font-family:'Cinzel',serif;background:linear-gradient(135deg,var(--blood-red),#6B0000);color:var(--gold);border:2px solid var(--gold);padding:15px;font-size:1.05rem;cursor:pointer;font-weight:700;letter-spacing:3px;transition:all .3s;border-radius:2px}
+        .btn-gold:hover{background:linear-gradient(135deg,var(--gold),var(--dark-gold));color:var(--black);box-shadow:0 0 30px rgba(212,175,55,.4);transform:translateY(-2px)}
+        .btn-gold:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
+        .btn-ghost{font-family:'Cinzel',serif;background:transparent;color:rgba(212,175,55,.5);border:1px solid rgba(212,175,55,.2);padding:15px 22px;font-size:.9rem;cursor:pointer;letter-spacing:2px;transition:all .3s;border-radius:2px}
+        .btn-ghost:hover{border-color:var(--blood-red);color:var(--cream)}
 
-        .loading-logo {
-            font-family: 'Pirata One', cursive;
-            font-size: 4rem;
-            color: var(--gold);
-            text-shadow: 3px 3px 0 var(--blood-red);
-            margin-bottom: 30px;
-            animation: pulse 2s infinite;
-        }
+        /* Top buttons */
+        .top-buttons{position:fixed;top:20px;right:20px;display:flex;gap:12px;z-index:10000;pointer-events:auto}
+        .top-btn{font-family:'Cinzel',serif;background:linear-gradient(135deg,var(--gold),var(--dark-gold));color:var(--black);border:none;padding:12px 28px;font-size:.9rem;font-weight:700;cursor:pointer;transition:all .3s;letter-spacing:2px;border-radius:2px;box-shadow:0 4px 15px rgba(0,0,0,.4)}
+        .top-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(212,175,55,.4)}
+        .wallet-connected{background:linear-gradient(135deg,var(--blood-red),#A00000);color:var(--gold)}
 
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.05); }
-        }
+        /* Placement banner */
+        .placement-banner{display:none;position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:10000;background:linear-gradient(135deg,rgba(139,0,0,.95),rgba(74,14,35,.95));border:2px solid var(--gold);padding:12px 35px;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;letter-spacing:3px;pointer-events:none;border-radius:2px;animation:pulse 2s ease-in-out infinite}
+        .placement-banner.active{display:block}
+        @keyframes pulse{0%,100%{box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 15px rgba(212,175,55,.2)}50%{box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 30px rgba(212,175,55,.4)}}
 
-        .loading-text {
-            font-family: 'Cinzel', serif;
-            color: var(--cream);
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
+        /* HUD */
+        .hud{position:absolute;top:20px;left:20px;background:linear-gradient(160deg,rgba(26,26,26,.97),rgba(15,10,5,.97));padding:22px 25px;border:2px solid var(--gold);pointer-events:auto;border-radius:2px;box-shadow:0 10px 40px rgba(0,0,0,.5),inset 0 1px 0 rgba(212,175,55,.1);min-width:220px}
+        .hud-title{font-family:'Pirata One',cursive;color:var(--gold);font-size:1.4rem;margin-bottom:12px;text-shadow:0 0 15px rgba(212,175,55,.3);letter-spacing:2px}
+        .hud-row{color:var(--cream);font-size:1rem;margin:8px 0;display:flex;justify-content:space-between;font-family:'Cormorant Garamond',serif}
+        .hud-row span:last-child{color:var(--gold);font-weight:600;font-family:'Cinzel',serif;font-size:.95rem}
+        .hud-div{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:10px 0;opacity:.3}
+        .hud-btn{width:100%;font-family:'Cinzel',serif;background:linear-gradient(135deg,var(--blood-red),#6B0000);color:var(--gold);border:1px solid var(--gold);padding:10px;font-size:.85rem;cursor:pointer;letter-spacing:2px;margin-top:8px;transition:all .3s;border-radius:2px;pointer-events:auto}
+        .hud-btn:hover{background:linear-gradient(135deg,#D4AF37,#9B7E2B);color:#0A0A0A}
 
-        .loading-bar {
-            width: 400px;
-            height: 8px;
-            background: var(--grey);
-            border: 2px solid var(--gold);
-            position: relative;
-            overflow: hidden;
-        }
+        /* Minimap */
+        .minimap-wrap{position:absolute;bottom:20px;right:20px;width:200px;height:200px;background:rgba(26,26,26,.97);border:2px solid var(--gold);pointer-events:auto;border-radius:2px;box-shadow:0 10px 40px rgba(0,0,0,.5);overflow:hidden}
+        .minimap-label{position:absolute;top:5px;left:50%;transform:translateX(-50%);color:var(--gold);font-size:.75rem;font-family:'Cinzel',serif;letter-spacing:2px;z-index:2}
+        .ctrl{position:absolute;bottom:228px;right:20px;background:linear-gradient(160deg,rgba(26,26,26,.95),rgba(15,10,5,.95));padding:12px 16px;border:1px solid rgba(212,175,55,.4);color:var(--cream);font-size:.8rem;max-width:200px;border-radius:2px}
+        .ctrl-t{color:var(--gold);font-family:'Cinzel',serif;margin-bottom:6px;font-size:.8rem;letter-spacing:2px}
+        .ctrl div{margin:3px 0;opacity:.8;font-family:'Cormorant Garamond',serif;font-size:.95rem}
 
-        .loading-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--gold), var(--blood-red));
-            width: 0%;
-            transition: width 0.3s;
-        }
-
-        .loading-percent {
-            margin-top: 10px;
-            font-family: 'Cinzel', serif;
-            color: var(--gold);
-            font-size: 1rem;
-        }
-
-        .wallet-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(26,26,26,0.98);
-            padding: 40px;
-            border: 3px solid var(--gold);
-            z-index: 10001;
-            min-width: 400px;
-        }
-
-        .wallet-modal.active { display: block; }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 10000;
-        }
-
-        .modal-overlay.active { display: block; }
-
-        .wallet-modal h3 {
-            font-family: 'Cinzel', serif;
-            color: var(--gold);
-            font-size: 2rem;
-            margin-bottom: 30px;
-            text-align: center;
-            letter-spacing: 2px;
-        }
-
-        .wallet-options {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .wallet-btn {
-            font-family: 'Cinzel', serif;
-            background: linear-gradient(135deg, var(--smoke) 0%, var(--grey) 100%);
-            color: var(--cream);
-            border: 2px solid var(--gold);
-            padding: 15px 25px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .wallet-btn:hover {
-            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
-            color: var(--black);
-            transform: translateX(5px);
-        }
-
-        .wallet-icon { font-size: 1.5rem; }
-        .wallet-status {
-            color: var(--gold);
-            font-size: 0.9rem;
-            text-align: center;
-            margin-top: 15px;
-        }
-
-        .close-modal {
-            font-family: 'Cinzel', serif;
-            background: transparent;
-            color: var(--gold);
-            border: 2px solid var(--gold);
-            padding: 10px 20px;
-            font-size: 1rem;
-            cursor: pointer;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .close-modal:hover {
-            background: var(--blood-red);
-            border-color: var(--blood-red);
-        }
-
-        .top-buttons {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            gap: 15px;
-            z-index: 10000;
-        }
-
-        .top-btn {
-            font-family: 'Cinzel', serif;
-            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
-            color: var(--black);
-            border: none;
-            padding: 12px 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 2px;
-        }
-
-        .top-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(212,175,55,0.4);
-        }
-
-        .wallet-connected {
-            background: linear-gradient(135deg, var(--blood-red), #A00000);
-            color: var(--gold);
-        }
+        /* Toast */
+        .toast{position:fixed;bottom:40px;left:50%;transform:translateX(-50%) translateY(100px);z-index:10002;background:linear-gradient(135deg,rgba(139,0,0,.95),rgba(74,14,35,.95));border:2px solid var(--gold);padding:15px 40px;font-family:'Cinzel',serif;color:var(--gold);font-size:1rem;letter-spacing:2px;transition:transform .5s cubic-bezier(.16,1,.3,1);border-radius:2px;box-shadow:0 10px 40px rgba(0,0,0,.6);pointer-events:none}
+        .toast.show{transform:translateX(-50%) translateY(0)}
     </style>
 </head>
 <body>
-    <div id="loadingScreen">
-        <div class="loading-logo">FAMIGLIA</div>
-        <div class="loading-text">LOADING EMPIRE...</div>
-        <div class="loading-bar">
-            <div class="loading-fill" id="loadingFill"></div>
-        </div>
-        <div class="loading-percent" id="loadingPercent">0%</div>
-    </div>
-
     <div class="top-buttons">
-        <button class="top-btn" id="walletBtn" onclick="openWalletModal()">CONNECT WALLET</button>
-        <button class="top-btn" onclick="window.open('docs.html', '_blank')">DOCS</button>
+        <button class="top-btn" id="walletBtn" onclick="openWallet()">CONNECT WALLET</button>
+        <button class="top-btn" onclick="window.open('docs.html','_blank')">DOCS</button>
     </div>
+    <div class="placement-banner" id="placeBanner">LEFT CLICK TO PLACE · RIGHT CLICK TO CANCEL</div>
+    <div class="toast" id="toast"></div>
 
-    <div class="modal-overlay" id="modalOverlay" onclick="closeWalletModal()"></div>
-    <div class="wallet-modal" id="walletModal">
-        <h3>CONNECT WALLET</h3>
-        <div class="wallet-options">
-            <button class="wallet-btn" onclick="connectWallet('phantom')">
-                <span class="wallet-icon">👻</span><span>Phantom</span>
-            </button>
-            <button class="wallet-btn" onclick="connectWallet('solflare')">
-                <span class="wallet-icon">🔥</span><span>Solflare</span>
-            </button>
-            <button class="wallet-btn" onclick="connectWallet('backpack')">
-                <span class="wallet-icon">🎒</span><span>Backpack</span>
-            </button>
-            <button class="wallet-btn" onclick="connectWallet('glow')">
-                <span class="wallet-icon">✨</span><span>Glow</span>
-            </button>
-            <button class="wallet-btn" onclick="connectWallet('trust')">
-                <span class="wallet-icon">🛡️</span><span>Trust Wallet</span>
-            </button>
-            <button class="wallet-btn" onclick="connectWallet('coinbase')">
-                <span class="wallet-icon">🔷</span><span>Coinbase Wallet</span>
-            </button>
-        </div>
-        <div class="wallet-status" id="walletStatus"></div>
-        <button class="close-modal" onclick="closeWalletModal()">CLOSE</button>
-    </div>
-
-    <div id="gameContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
-        <canvas id="gameCanvas"></canvas>
-        
-        <div id="gameUI" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
-            <div style="position: absolute; top: 20px; left: 20px; background: rgba(26,26,26,0.95); padding: 20px; border: 2px solid var(--gold); pointer-events: auto;">
-                <div style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; margin-bottom: 10px;">YOUR EMPIRE</div>
-                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">💰 Money: $<span id="playerMoney">50000</span></div>
-                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">🏢 Properties: <span id="propertyCount">0</span></div>
-                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">💵 Income/h: $<span id="incomePerHour">0</span></div>
+    <!-- WALLET MODAL -->
+    <div class="overlay" id="walletOv" onclick="closeWallet()"></div>
+    <div class="modal wallet-modal" id="walletMod">
+        <div class="wallet-header"><h3>ENTRA NELLA FAMIGLIA</h3><p>Connect your wallet to join the family</p></div>
+        <div class="wallet-body">
+            <div class="wallet-options">
+                <button class="wallet-btn" onclick="connectWallet('phantom')"><span class="wallet-icon">👻</span>Phantom</button>
+                <button class="wallet-btn" onclick="connectWallet('solflare')"><span class="wallet-icon">🔥</span>Solflare</button>
+                <button class="wallet-btn" onclick="connectWallet('backpack')"><span class="wallet-icon">🎒</span>Backpack</button>
+                <button class="wallet-btn" onclick="connectWallet('glow')"><span class="wallet-icon">✨</span>Glow</button>
+                <button class="wallet-btn" onclick="connectWallet('trust')"><span class="wallet-icon">🛡️</span>Trust Wallet</button>
+                <button class="wallet-btn" onclick="connectWallet('coinbase')"><span class="wallet-icon">🔷</span>Coinbase Wallet</button>
             </div>
+            <div class="wallet-status" id="walletStatus"></div>
+            <button class="btn-ghost" onclick="closeWallet()" style="width:100%;margin-top:15px">CHIUDI</button>
+        </div>
+    </div>
 
-            <div id="propertyShop" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(26,26,26,0.98); padding: 40px; border: 3px solid var(--gold); pointer-events: auto; min-width: 400px;">
-                <h3 style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 2rem; margin-bottom: 20px; text-align: center;" id="shopTitle"></h3>
-                <div style="color: var(--cream); margin-bottom: 20px; line-height: 1.6;" id="shopDescription"></div>
-                <div style="color: var(--gold); font-size: 1.3rem; margin-bottom: 10px;">💰 Price: $<span id="shopPrice"></span></div>
-                <div style="color: var(--gold); font-size: 1.1rem; margin-bottom: 30px;">💵 Income: $<span id="shopIncome"></span>/hour</div>
-                <div style="display: flex; gap: 20px; justify-content: center;">
-                    <button onclick="buyProperty()" style="font-family: 'Cinzel', serif; background: var(--blood-red); color: var(--gold); border: none; padding: 15px 30px; font-size: 1.1rem; cursor: pointer; font-weight: 600; letter-spacing: 2px;">BUY NOW</button>
-                    <button onclick="closeShop()" style="font-family: 'Cinzel', serif; background: transparent; color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.1rem; cursor: pointer; font-weight: 600; letter-spacing: 2px;">CANCEL</button>
+    <!-- SHOP MODAL -->
+    <div class="overlay" id="shopOv" onclick="closeShop()"></div>
+    <div class="modal shop-modal" id="shopMod">
+        <div class="shop-header">
+            <h2>Il Mercato Nero</h2>
+            <p>— The Black Market —</p>
+        </div>
+        <div class="shop-body">
+            <div class="shop-balance">YOUR BALANCE: <span id="shopBal">$50,000</span></div>
+
+            <div class="shop-item selected" id="shopItem1" onclick="selectItem(0)">
+                <div class="shop-item-top">
+                    <div class="shop-item-icon">🎰</div>
+                    <div class="shop-item-info">
+                        <h4>La Corona d'Oro</h4>
+                        <p>The Golden Crown Casino</p>
+                    </div>
+                </div>
+                <div class="shop-item-desc">A high-stakes casino where fortunes are won and lost. Poker tables, slot machines, and VIP lounges — the crown jewel of your empire.</div>
+                <div class="shop-item-stats">
+                    <div class="shop-item-stat"><span class="label">PRICE</span><span class="val">$25K</span></div>
+                    <div class="shop-item-stat"><span class="label">INCOME</span><span class="val">$500/h</span></div>
+                    <div class="shop-item-stat"><span class="label">RISK</span><span class="val" style="color:#ff6347">ALTO</span></div>
                 </div>
             </div>
 
-            <div style="position: absolute; bottom: 20px; right: 20px; width: 200px; height: 200px; background: rgba(26,26,26,0.95); border: 3px solid var(--gold); pointer-events: auto;">
-                <canvas id="minimap" width="200" height="200" style="display: block;"></canvas>
-                <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: var(--gold); font-size: 0.8rem; font-family: 'Cinzel', serif;">MAP</div>
+            <div class="shop-item" id="shopItem2" style="opacity:.4;pointer-events:none;position:relative">
+                <div style="position:absolute;top:10px;right:12px;font-family:'Cinzel',serif;color:var(--blood-red);font-size:.75rem;letter-spacing:2px;border:1px solid var(--blood-red);padding:3px 10px;border-radius:2px">COMING SOON</div>
+                <div class="shop-item-top">
+                    <div class="shop-item-icon">🍸</div>
+                    <div class="shop-item-info">
+                        <h4>Ombra Nera</h4>
+                        <p>The Dark Shadow Lounge</p>
+                    </div>
+                </div>
+                <div class="shop-item-stats">
+                    <div class="shop-item-stat"><span class="label">PRICE</span><span class="val">$15K</span></div>
+                    <div class="shop-item-stat"><span class="label">INCOME</span><span class="val">$300/h</span></div>
+                </div>
             </div>
 
-            <div style="position: absolute; bottom: 230px; right: 20px; background: rgba(26,26,26,0.9); padding: 10px 15px; border: 2px solid var(--gold); color: var(--cream); font-size: 0.85rem; max-width: 200px;">
-                <div style="color: var(--gold); font-family: 'Cinzel', serif; margin-bottom: 5px; font-size: 0.9rem;">CONTROLS</div>
-                <div>🖱️ Click: Move & Buy</div>
+            <div class="shop-item" id="shopItem3" style="opacity:.4;pointer-events:none;position:relative">
+                <div style="position:absolute;top:10px;right:12px;font-family:'Cinzel',serif;color:var(--blood-red);font-size:.75rem;letter-spacing:2px;border:1px solid var(--blood-red);padding:3px 10px;border-radius:2px">COMING SOON</div>
+                <div class="shop-item-top">
+                    <div class="shop-item-icon">🏨</div>
+                    <div class="shop-item-info">
+                        <h4>Il Palazzo</h4>
+                        <p>The Palace Hotel</p>
+                    </div>
+                </div>
+                <div class="shop-item-stats">
+                    <div class="shop-item-stat"><span class="label">PRICE</span><span class="val">$50K</span></div>
+                    <div class="shop-item-stat"><span class="label">INCOME</span><span class="val">$1,000/h</span></div>
+                </div>
             </div>
+
+            <div class="shop-footer">
+                <button class="btn-gold" id="buyBtn" onclick="enterPlacement()">PIAZZA — PLACE</button>
+                <button class="btn-ghost" onclick="closeShop()">CHIUDI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME -->
+    <div id="gc" style="position:fixed;inset:0;z-index:1">
+        <canvas id="cv"></canvas>
+        <div style="position:absolute;inset:0;pointer-events:none">
+            <div class="hud">
+                <div class="hud-title">La Famiglia</div>
+                <div class="hud-row"><span>💰 Soldi</span><span>$<span id="hMoney">50,000</span></span></div>
+                <div class="hud-div"></div>
+                <div class="hud-row"><span>🎰 Casinò</span><span id="hCount">0</span></div>
+                <div class="hud-row"><span>💵 Reddito/h</span><span>$<span id="hIncome">0</span></span></div>
+                <div class="hud-div"></div>
+                <button class="hud-btn" onclick="openShop()">IL MERCATO NERO</button>
+            </div>
+            <div class="minimap-wrap"><canvas id="mm" width="200" height="200" style="display:block"></canvas><div class="minimap-label">MAPPA</div></div>
+            <div class="ctrl"><div class="ctrl-t">CONTROLLI</div><div>🖱️ Left Click — Move</div><div>🏢 Shop — Buy & Place</div><div>🔍 Scroll — Zoom</div></div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script>
-        let gameActive = false;
-        let scene, camera, renderer, player;
-        let playerMoney = 50000;
-        let properties = [];
-        let selectedProperty = null;
-        let targetPosition = null;
-        let isMoving = false;
-        let connectedWallet = null;
-        let casinoModel = null;
+    let scene,camera,renderer,player,loader,gameActive=true;
+    let money=50000,casinos=[],target=null,moving=false,placing=false;
+    let camDist=40,camMin=12,camMax=65;
+    let placeGlow=null,placeInner=null,placeArrows=[];
+    let wp=null,wpArr=[];
+    const PRICE=25000,INCOME=500;
+    const GLB='https://raw.githubusercontent.com/Strawrfsa/famiglia-assets/main/harlem_casino.glb';
 
-        function updateLoadingBar(percent) {
-            document.getElementById('loadingFill').style.width = percent + '%';
-            document.getElementById('loadingPercent').textContent = Math.floor(percent) + '%';
+    function toast(m,d=2500){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),d)}
+    function openWallet(){document.getElementById('walletMod').classList.add('active');document.getElementById('walletOv').classList.add('active')}
+    function closeWallet(){document.getElementById('walletMod').classList.remove('active');document.getElementById('walletOv').classList.remove('active')}
+
+    async function connectWallet(type){
+        const st=document.getElementById('walletStatus'),btn=document.getElementById('walletBtn');
+        st.textContent=`Connecting to ${type}...`;
+        try{
+            let p=null;
+            if(type==='phantom'&&window.phantom?.solana)p=window.phantom.solana;
+            else if(type==='solflare'&&window.solflare)p=window.solflare;
+            else if(type==='backpack'&&window.backpack)p=window.backpack;
+            else if(type==='glow'&&window.glowSolana)p=window.glowSolana;
+            else if(type==='trust'&&window.trustwallet?.solana)p=window.trustwallet.solana;
+            else if(type==='coinbase'&&window.coinbaseSolana)p=window.coinbaseSolana;
+            if(p){const r=await p.connect(),a=r.publicKey.toString();
+                st.textContent=`Connected: ${a.slice(0,6)}...${a.slice(-4)}`;
+                btn.textContent=`${a.slice(0,4)}...${a.slice(-4)}`;btn.classList.add('wallet-connected');
+                toast('BENVENUTO NELLA FAMIGLIA');setTimeout(closeWallet,1200);
+            }else{
+                const u={phantom:'https://phantom.app/',solflare:'https://solflare.com/',backpack:'https://backpack.app/',glow:'https://glow.app/',trust:'https://trustwallet.com/',coinbase:'https://www.coinbase.com/wallet'};
+                st.textContent=`${type} not detected. Opening install page...`;setTimeout(()=>window.open(u[type],'_blank'),1500);
+            }
+        }catch(e){st.textContent='Connection rejected.';console.error(e)}
+    }
+
+    function selectItem(i){/* only item 0 for now */}
+    function openShop(){
+        document.getElementById('shopBal').textContent='$'+money.toLocaleString();
+        document.getElementById('buyBtn').disabled=money<PRICE;
+        document.getElementById('shopMod').classList.add('active');document.getElementById('shopOv').classList.add('active');
+    }
+    function closeShop(){document.getElementById('shopMod').classList.remove('active');document.getElementById('shopOv').classList.remove('active')}
+
+    function enterPlacement(){
+        if(money<PRICE){toast('NOT ENOUGH MONEY!');return}
+        closeShop();placing=true;
+        document.getElementById('placeBanner').classList.add('active');
+        if(!placeGlow){
+            placeGlow=new THREE.Mesh(new THREE.RingGeometry(1.8,3.2,32),new THREE.MeshBasicMaterial({color:0xD4AF37,side:THREE.DoubleSide,transparent:true,opacity:.5}));
+            placeGlow.rotation.x=-Math.PI/2;placeGlow.position.y=.1;scene.add(placeGlow);
+            placeInner=new THREE.Mesh(new THREE.CircleGeometry(2,32),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:.12,side:THREE.DoubleSide}));
+            placeInner.rotation.x=-Math.PI/2;placeInner.position.y=.08;scene.add(placeInner);
+            const off=[[0,-3.8],[0,3.8],[-3.8,0],[3.8,0]],rot=[0,Math.PI,Math.PI/2,-Math.PI/2];
+            for(let i=0;i<4;i++){const s=new THREE.Shape();s.moveTo(0,.6);s.lineTo(-.3,0);s.lineTo(.3,0);s.closePath();
+                const a=new THREE.Mesh(new THREE.ShapeGeometry(s),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:.8,side:THREE.DoubleSide}));
+                a.rotation.x=-Math.PI/2;a.position.y=.12;a.userData={ox:off[i][0],oz:off[i][1],rz:rot[i]};
+                placeArrows.push(a);scene.add(a)}
         }
+        placeGlow.visible=placeInner.visible=true;placeArrows.forEach(a=>a.visible=true);
+    }
+    function exitPlacement(){placing=false;document.getElementById('placeBanner').classList.remove('active');
+        if(placeGlow){placeGlow.visible=placeInner.visible=false}placeArrows.forEach(a=>a.visible=false)}
 
-        function hideLoadingScreen() {
-            const screen = document.getElementById('loadingScreen');
-            screen.classList.add('hidden');
-            setTimeout(() => screen.style.display = 'none', 500);
-        }
-
-        function openWalletModal() {
-            document.getElementById('walletModal').classList.add('active');
-            document.getElementById('modalOverlay').classList.add('active');
-        }
-
-        function closeWalletModal() {
-            document.getElementById('walletModal').classList.remove('active');
-            document.getElementById('modalOverlay').classList.remove('active');
-        }
-
-        function connectWallet(walletType) {
-            const walletBtn = document.getElementById('walletBtn');
-            const statusDiv = document.getElementById('walletStatus');
-            statusDiv.textContent = `Connecting to ${walletType}...`;
-            
-            setTimeout(() => {
-                const address = 'SOL' + Math.random().toString(36).substring(2, 15);
-                statusDiv.textContent = `Connected: ${address}`;
-                walletBtn.textContent = `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
-                walletBtn.classList.add('wallet-connected');
-                setTimeout(() => closeWalletModal(), 1500);
-            }, 1000);
-        }
-
-        const propertyTypes = [
-            { name: '🎰 Harlem Casino', price: 25000, income: 500, emoji: '🎰', description: 'High-class casino.', color: 0x8B0000, glowColor: 0xff0000, height: 8, style: 'casino', use3DModel: true },
-            { name: '🎭 Grand Theater', price: 35000, income: 700, emoji: '🎭', description: 'Upscale theater.', color: 0x4B0082, glowColor: 0x9370DB, height: 12, style: 'theater' },
-            { name: '🍸 Velvet Lounge', price: 15000, income: 300, emoji: '🍸', description: 'Cocktail bar.', color: 0x0a1a2a, glowColor: 0x00CED1, height: 6, style: 'lounge' },
-            { name: '💃 Pink Paradise', price: 30000, income: 600, emoji: '💃', description: 'Club.', color: 0x4A0E4E, glowColor: 0xFF1493, height: 7, style: 'stripclub' },
-            { name: '🏪 Corner Store', price: 8000, income: 150, emoji: '🏪', description: 'Store.', color: 0x2a2a1a, glowColor: 0xFFFF00, height: 5, style: 'store' },
-            { name: '🏨 Grand Hotel', price: 50000, income: 1000, emoji: '🏨', description: 'Luxury hotel.', color: 0x1a1510, glowColor: 0xFFD700, height: 15, style: 'hotel' },
-            { name: '🎬 Cinema', price: 28000, income: 550, emoji: '🎬', description: 'Cinema.', color: 0x1a0a1a, glowColor: 0xFF00FF, height: 10, style: 'cinema' },
-            { name: '🍕 Pizza Joint', price: 12000, income: 250, emoji: '🍕', description: 'Restaurant.', color: 0x2a1a0a, glowColor: 0xFF6347, height: 6, style: 'restaurant' },
-            { name: '💈 Barber Shop', price: 6000, income: 100, emoji: '💈', description: 'Barbershop.', color: 0x1a1a2a, glowColor: 0xFF0000, height: 5, style: 'barber' },
-            { name: '⛽ Gas Station', price: 20000, income: 400, emoji: '⛽', description: 'Gas station.', color: 0x2a2a2a, glowColor: 0x00FF00, height: 4, style: 'gas' },
-            { name: '🎪 Night Club', price: 32000, income: 650, emoji: '🎪', description: 'Club.', color: 0x0a0a2a, glowColor: 0x00FFFF, height: 8, style: 'nightclub' },
-            { name: '🏦 Pawn Shop', price: 18000, income: 350, emoji: '🏦', description: 'Pawn shop.', color: 0x2a2a0a, glowColor: 0xFFD700, height: 5, style: 'pawn' }
-        ];
-
-        window.addEventListener('load', () => {
-            updateLoadingBar(10);
-            initGame();
+    function placeCasino(pos){
+        if(money<PRICE){toast('NOT ENOUGH MONEY!');return}
+        money-=PRICE;exitPlacement();
+        loader.load(GLB,g=>{
+            const m=g.scene.clone();m.position.set(pos.x,0,pos.z);m.scale.set(.5,.5,.5);
+            m.traverse(c=>{if(c.isMesh){c.castShadow=true;c.receiveShadow=true}});
+            scene.add(m);casinos.push({model:m,pos});updateUI();toast("LA CORONA D'ORO — ESTABLISHED");
+        },undefined,()=>{
+            const g=new THREE.Group();
+            const b=new THREE.Mesh(new THREE.BoxGeometry(3,4,3),new THREE.MeshStandardMaterial({color:0x8B0000,emissive:0xff0000,emissiveIntensity:.2}));
+            b.position.y=2;b.castShadow=true;g.add(b);
+            const s=new THREE.Mesh(new THREE.BoxGeometry(2.5,.6,.15),new THREE.MeshStandardMaterial({color:0xD4AF37,emissive:0xD4AF37,emissiveIntensity:1.5}));
+            s.position.set(0,4.3,1.6);g.add(s);
+            g.position.set(pos.x,0,pos.z);scene.add(g);casinos.push({model:g,pos});updateUI();toast("LA CORONA D'ORO — ESTABLISHED");
         });
+    }
+    function updateUI(){
+        document.getElementById('hMoney').textContent=money.toLocaleString();
+        document.getElementById('hCount').textContent=casinos.length;
+        document.getElementById('hIncome').textContent=(casinos.length*INCOME).toLocaleString();
+    }
 
-        function initGame() {
-            const canvas = document.getElementById('gameCanvas');
-            
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x0a0a0a);
-            scene.fog = new THREE.Fog(0x0a0a0a, 50, 100);
+    function makeWP(pt){removeWP();
+        wp=new THREE.Mesh(new THREE.CircleGeometry(.4,16),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:.7,side:THREE.DoubleSide}));
+        wp.rotation.x=-Math.PI/2;wp.position.set(pt.x,.1,pt.z);scene.add(wp);
+        for(let i=0;i<4;i++){const s=new THREE.Shape();s.moveTo(0,.4);s.lineTo(-.2,0);s.lineTo(.2,0);s.closePath();
+            const a=new THREE.Mesh(new THREE.ShapeGeometry(s),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:.6,side:THREE.DoubleSide}));
+            a.rotation.x=-Math.PI/2;const an=i*Math.PI/2,d=1.2;
+            a.position.set(pt.x+Math.sin(an)*d,.12,pt.z+Math.cos(an)*d);a.rotation.z=-an;
+            wpArr.push(a);scene.add(a)}}
+    function removeWP(){if(wp){scene.remove(wp);wp=null}wpArr.forEach(a=>scene.remove(a));wpArr=[]}
 
-            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(0, 40, 30);
-            camera.lookAt(0, 0, 0);
+    window.addEventListener('load',()=>{
+        const cv=document.getElementById('cv');
+        scene=new THREE.Scene();scene.background=new THREE.Color(0x080808);scene.fog=new THREE.FogExp2(0x080808,.015);
+        camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,500);
+        camera.position.set(0,camDist,22);camera.lookAt(0,0,0);
+        renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+        renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+        renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+        renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.2;
+        loader=new THREE.GLTFLoader();
 
-            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMap.type = THREE.BasicShadowMap;
+        // === LIGHTS (limited to avoid MAX_TEXTURE_IMAGE_UNITS) ===
+        scene.add(new THREE.AmbientLight(0xffeedd,.35));
+        const sun=new THREE.DirectionalLight(0xffd080,.8);sun.position.set(15,35,15);sun.castShadow=true;
+        sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-50;sun.shadow.camera.right=50;
+        sun.shadow.camera.top=50;sun.shadow.camera.bottom=-50;scene.add(sun);
+        scene.add(new THREE.DirectionalLight(0x6666aa,.12)).position.set(-20,40,-20);
+        // Only 4 accent lights total
+        const sl=new THREE.SpotLight(0x8B0000,.5);sl.position.set(-25,20,-25);sl.angle=Math.PI/5;sl.penumbra=.7;scene.add(sl);
+        const sl2=new THREE.SpotLight(0xD4AF37,.4);sl2.position.set(25,20,25);sl2.angle=Math.PI/5;sl2.penumbra=.7;scene.add(sl2);
 
-            updateLoadingBar(30);
+        // === GROUND (1024 texture) ===
+        const gc=document.createElement('canvas');gc.width=1024;gc.height=1024;const gx=gc.getContext('2d');
+        gx.fillStyle='#1c1c1c';gx.fillRect(0,0,1024,1024);
+        for(let i=0;i<50;i++){const cx=Math.random()*1024,cy=Math.random()*1024,cr=Math.random()*80+20;
+            const gr=gx.createRadialGradient(cx,cy,0,cx,cy,cr);const b=~~(Math.random()*15)+18;
+            gr.addColorStop(0,`rgba(${b+8},${b+6},${b+3},.35)`);gr.addColorStop(1,'transparent');gx.fillStyle=gr;gx.fillRect(cx-cr,cy-cr,cr*2,cr*2)}
+        for(let i=0;i<15000;i++){const b=~~(Math.random()*30)+12;gx.fillStyle=`rgba(${b},${b},${b},${Math.random()*.3})`;gx.fillRect(Math.random()*1024,Math.random()*1024,Math.random()*2+.5,Math.random()*2+.5)}
+        gx.strokeStyle='rgba(8,8,8,.5)';gx.lineWidth=1;
+        for(let i=0;i<25;i++){gx.beginPath();let cx=Math.random()*1024,cy=Math.random()*1024;gx.moveTo(cx,cy);for(let j=0;j<4;j++){cx+=(Math.random()-.5)*50;cy+=(Math.random()-.5)*50;gx.lineTo(cx,cy)}gx.stroke()}
+        for(let i=0;i<15;i++){gx.fillStyle=`rgba(8,6,4,${Math.random()*.2+.05})`;gx.beginPath();gx.ellipse(Math.random()*1024,Math.random()*1024,Math.random()*20+5,Math.random()*15+5,Math.random()*Math.PI,0,Math.PI*2);gx.fill()}
+        const gt=new THREE.CanvasTexture(gc);gt.wrapS=gt.wrapT=THREE.RepeatWrapping;gt.repeat.set(4,4);
+        const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({map:gt,roughness:.95,metalness:.05}));
+        ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;ground.name='g';scene.add(ground);
 
-            const ambientLight = new THREE.AmbientLight(0xffd700, 0.4);
-            scene.add(ambientLight);
+        // === STREETS ===
+        const sc=document.createElement('canvas');sc.width=256;sc.height=256;const sx=sc.getContext('2d');
+        sx.fillStyle='#0f0f0f';sx.fillRect(0,0,256,256);
+        for(let i=0;i<4000;i++){const b=~~(Math.random()*22)+6;sx.fillStyle=`rgba(${b},${b},${b},${Math.random()*.5})`;sx.fillRect(Math.random()*256,Math.random()*256,Math.random()*2,Math.random()*2)}
+        sx.fillStyle='#FFD700';for(let i=0;i<256;i+=32){sx.fillRect(118,i,10,18);sx.fillRect(128,i,10,18)}
+        sx.fillStyle='#FFF';sx.globalAlpha=.6;sx.fillRect(8,0,3,256);sx.fillRect(245,0,3,256);sx.globalAlpha=1;
+        const st=new THREE.CanvasTexture(sc);st.wrapS=st.wrapT=THREE.RepeatWrapping;st.repeat.set(1,7);
+        const sm=new THREE.MeshStandardMaterial({map:st,roughness:.85});
+        for(let i=-2;i<=2;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(100,5),sm);s.rotation.x=-Math.PI/2;s.position.set(0,.02,i*16);s.receiveShadow=true;s.name='g';scene.add(s)}
+        for(let i=-2;i<=2;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(5,100),sm);s.rotation.x=-Math.PI/2;s.rotation.z=Math.PI/2;s.position.set(i*16,.02,0);s.receiveShadow=true;s.name='g';scene.add(s)}
 
-            const directionalLight = new THREE.DirectionalLight(0xffd700, 0.8);
-            directionalLight.position.set(10, 30, 10);
-            directionalLight.castShadow = true;
-            directionalLight.shadow.mapSize.width = 1024;
-            directionalLight.shadow.mapSize.height = 1024;
-            scene.add(directionalLight);
+        // === LAMP POSTS (visual only, NO extra lights — using emissive heads) ===
+        const lpM=new THREE.MeshStandardMaterial({color:0x222,metalness:.9,roughness:.1});
+        const lhM=new THREE.MeshStandardMaterial({color:0xffd700,emissive:0xffd700,emissiveIntensity:4});
+        // Only add 2 actual PointLights for key areas, rest are emissive-only
+        let lightCount=0;
+        for(let x=-40;x<=40;x+=16)for(let z=-40;z<=40;z+=16){
+            if(Math.random()>.4){
+                const lx=x+(Math.random()-.5)*4,lz=z+(Math.random()-.5)*4;
+                const p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.14,9,6),lpM);p.position.set(lx,4.5,lz);p.castShadow=true;scene.add(p);
+                const arm=new THREE.Mesh(new THREE.CylinderGeometry(.05,.05,1.5,4),lpM);arm.rotation.z=Math.PI/2;arm.position.set(lx+.6,8.8,lz);scene.add(arm);
+                const h=new THREE.Mesh(new THREE.SphereGeometry(.3,8,8),lhM);h.position.set(lx+1.2,8.8,lz);scene.add(h);
+                // Only first 4 lamps get real lights
+                if(lightCount<4){const lt=new THREE.PointLight(0xffd080,.8,20,2);lt.position.set(lx+1.2,8.5,lz);scene.add(lt);lightCount++}
+            }}
 
-            updateLoadingBar(50);
+        // === DECOR ===
+        const wM=new THREE.MeshStandardMaterial({color:0x3a2010,roughness:.9});
+        const mM=new THREE.MeshStandardMaterial({color:0x333,metalness:.7,roughness:.3});
+        for(let i=0;i<8;i++){const b=new THREE.Group();b.add(new THREE.Mesh(new THREE.BoxGeometry(2,.12,.5),wM));
+            const bk=new THREE.Mesh(new THREE.BoxGeometry(2,.6,.08),wM);bk.position.set(0,.36,-.22);b.add(bk);
+            b.position.set((Math.random()-.5)*75,.25,(Math.random()-.5)*75);b.rotation.y=Math.random()*Math.PI;scene.add(b)}
+        for(let i=0;i<10;i++){const t=new THREE.Mesh(new THREE.CylinderGeometry(.25,.3,.7,8),mM);t.position.set((Math.random()-.5)*75,.35,(Math.random()-.5)*75);scene.add(t)}
+        // Cars
+        const cc=[0x8B0000,0x050505,0x2F4F4F,0x777,0x1a1a3a];
+        for(let i=0;i<6;i++){const c=new THREE.Group();const cm=new THREE.MeshStandardMaterial({color:cc[~~(Math.random()*cc.length)],metalness:.9,roughness:.1});
+            c.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.8,.7,4),cm),{position:new THREE.Vector3(0,.4,0),castShadow:true}));
+            c.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.5,.55,1.8),cm),{position:new THREE.Vector3(0,1,-.3)}));
+            const hlm=new THREE.MeshStandardMaterial({color:0xffffcc,emissive:0xffffcc,emissiveIntensity:.4});
+            [[-0.65,.38,2],[.65,.38,2]].forEach(([hx,hy,hz])=>{c.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.1,6,6),hlm),{position:new THREE.Vector3(hx,hy,hz)}))});
+            c.position.set((Math.random()-.5)*70,0,(Math.random()-.5)*70);c.rotation.y=Math.random()*Math.PI*2;scene.add(c)}
+        // Hydrants
+        for(let i=0;i<5;i++){const hm=new THREE.MeshStandardMaterial({color:0xcc0000,roughness:.6});
+            const h=new THREE.Group();h.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.55,8),hm),{position:new THREE.Vector3(0,.28,0)}));
+            h.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.15,8,8),hm),{position:new THREE.Vector3(0,.58,0)}));
+            h.position.set((Math.random()-.5)*65,0,(Math.random()-.5)*65);scene.add(h)}
 
-            createCity();
-            createPlayer();
-            
-            updateLoadingBar(70);
+        // === PLAYER ===
+        player=new THREE.Group();const bM=new THREE.MeshStandardMaterial({color:0x111,roughness:.5,metalness:.1});
+        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.36,.46,1.15,8),bM),{position:new THREE.Vector3(0,.58,0),castShadow:true}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1,.18,.45),bM),{position:new THREE.Vector3(0,1.1,0)}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.SphereGeometry(.27,16,16),new THREE.MeshStandardMaterial({color:0xFFDBB5,roughness:.8})),{position:new THREE.Vector3(0,1.45,0)}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.04,16),new THREE.MeshStandardMaterial({color:0x111})),{position:new THREE.Vector3(0,1.63,0)}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.2,.26,.3,16),new THREE.MeshStandardMaterial({color:0x111})),{position:new THREE.Vector3(0,1.82,0)}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.265,.265,.05,16),new THREE.MeshStandardMaterial({color:0xD4AF37,metalness:.8,roughness:.2})),{position:new THREE.Vector3(0,1.69,0)}));
+        player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(.09,.45,.04),new THREE.MeshStandardMaterial({color:0xD4AF37,emissive:0xD4AF37,emissiveIntensity:.3,metalness:.8})),{position:new THREE.Vector3(0,.78,.4)}));
+        const lM=new THREE.MeshStandardMaterial({color:0x111});
+        [-.14,.14].forEach(x=>{player.add(Object.assign(new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.75,8),lM),{position:new THREE.Vector3(x,.38,0)}))});
+        const sM=new THREE.MeshStandardMaterial({color:0x080808,metalness:.7,roughness:.3});
+        [-.14,.14].forEach(x=>{player.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(.18,.09,.28),sM),{position:new THREE.Vector3(x,0,.04)}))});
+        scene.add(player);
+        const mk=new THREE.Mesh(new THREE.RingGeometry(.65,.95,32),new THREE.MeshBasicMaterial({color:0xD4AF37,side:THREE.DoubleSide,transparent:true,opacity:.6}));
+        mk.rotation.x=-Math.PI/2;mk.position.y=.05;scene.add(mk);player.mk=mk;
+        const gl=new THREE.Mesh(new THREE.CircleGeometry(1,32),new THREE.MeshBasicMaterial({color:0xD4AF37,transparent:true,opacity:.12,side:THREE.DoubleSide}));
+        gl.rotation.x=-Math.PI/2;gl.position.y=.03;scene.add(gl);player.gl=gl;
 
-            loadCasinoModel(() => {
-                updateLoadingBar(90);
-                createProperties();
-                updateLoadingBar(100);
-                
-                setTimeout(() => {
-                    hideLoadingScreen();
-                    gameActive = true;
-                    animate();
-                }, 500);
-            });
+        // === CONTROLS ===
+        const ray=new THREE.Raycaster(),mo=new THREE.Vector2();
+        function gp(e){mo.x=(e.clientX/innerWidth)*2-1;mo.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(mo,camera);
+            const h=ray.intersectObjects(scene.children.filter(o=>o.name==='g'));return h.length?h[0].point:null}
+        cv.addEventListener('click',e=>{if(!gameActive)return;const pt=gp(e);if(!pt)return;
+            if(placing){placeCasino({x:pt.x,z:pt.z})}else{target={x:pt.x,z:pt.z};moving=true;makeWP(pt)}});
+        cv.addEventListener('contextmenu',e=>{e.preventDefault();if(placing)exitPlacement()});
+        cv.addEventListener('mousemove',e=>{if(!placing||!placeGlow)return;const pt=gp(e);if(!pt)return;
+            placeGlow.position.set(pt.x,.1,pt.z);placeInner.position.set(pt.x,.08,pt.z);
+            placeArrows.forEach(a=>{a.position.set(pt.x+a.userData.ox,.12,pt.z+a.userData.oz);a.rotation.z=a.userData.rz})});
+        cv.addEventListener('wheel',e=>{e.preventDefault();camDist+=e.deltaY*.03;camDist=Math.max(camMin,Math.min(camMax,camDist))},{passive:false});
 
-            setupControls();
-            window.addEventListener('resize', onWindowResize);
-        }
+        // === ANIMATE ===
+        (function run(){if(!gameActive)return;requestAnimationFrame(run);const t=Date.now()*.001;
+            if(moving&&target){const dx=target.x-player.position.x,dz=target.z-player.position.z,d=Math.sqrt(dx*dx+dz*dz);
+                if(d>.5){player.position.x+=(dx/d)*.22;player.position.z+=(dz/d)*.22;
+                    player.mk.position.set(player.position.x,.05,player.position.z);
+                    player.gl.position.set(player.position.x,.03,player.position.z);
+                    player.rotation.y=Math.atan2(dx,dz);player.position.y=Math.sin(t*8)*.08;
+                }else{moving=false;player.position.y=0;removeWP()}}
+            if(player.mk)player.mk.material.opacity=.35+Math.sin(t*3)*.2;
+            camera.position.x+=(player.position.x-camera.position.x)*.05;
+            camera.position.z+=(player.position.z+camDist*.7-camera.position.z)*.05;
+            camera.position.y+=(camDist-camera.position.y)*.05;
+            camera.lookAt(player.position.x,0,player.position.z);
+            if(placing&&placeGlow&&placeGlow.visible){
+                placeGlow.material.opacity=.3+Math.sin(t*4)*.2;placeInner.material.opacity=.1+Math.sin(t*3)*.06;
+                const s=1+Math.sin(t*2)*.05;placeGlow.scale.set(s,s,s);
+                placeArrows.forEach((a,i)=>{a.material.opacity=.5+Math.sin(t*4+i)*.3})}
+            if(wp){wp.material.opacity=.5+Math.sin(t*5)*.3;wpArr.forEach((a,i)=>{a.material.opacity=.4+Math.sin(t*5+i*.5)*.3})}
+            // Minimap
+            const mc=document.getElementById('mm');if(mc){const ctx=mc.getContext('2d'),sz=200,ms=100;
+                ctx.fillStyle='#080808';ctx.fillRect(0,0,sz,sz);
+                ctx.strokeStyle='rgba(212,175,55,.06)';ctx.lineWidth=1;
+                for(let i=0;i<=10;i++){const v=i/10*sz;ctx.beginPath();ctx.moveTo(v,0);ctx.lineTo(v,sz);ctx.stroke();ctx.beginPath();ctx.moveTo(0,v);ctx.lineTo(sz,v);ctx.stroke()}
+                ctx.strokeStyle='rgba(80,80,80,.25)';ctx.lineWidth=2;
+                for(let i=-2;i<=2;i++){const y=((i*16+ms/2)/ms)*sz;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(sz,y);ctx.stroke();
+                    const x=((i*16+ms/2)/ms)*sz;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,sz);ctx.stroke()}
+                casinos.forEach(c=>{const mx=((c.pos.x+ms/2)/ms)*sz,my=((c.pos.z+ms/2)/ms)*sz;
+                    const gr=ctx.createRadialGradient(mx,my,0,mx,my,10);gr.addColorStop(0,'rgba(212,175,55,.35)');gr.addColorStop(1,'transparent');
+                    ctx.fillStyle=gr;ctx.fillRect(mx-10,my-10,20,20);ctx.fillStyle='#D4AF37';ctx.fillRect(mx-3,my-3,6,6);
+                    ctx.strokeStyle='#D4AF37';ctx.lineWidth=1;ctx.strokeRect(mx-4,my-4,8,8)});
+                const px=((player.position.x+ms/2)/ms)*sz,py=((player.position.z+ms/2)/ms)*sz;
+                ctx.fillStyle='#D4AF37';ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);ctx.fill();
+                ctx.strokeStyle='#F5E6D3';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);ctx.stroke();
+                ctx.strokeStyle='rgba(212,175,55,.5)';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(px,py);
+                ctx.lineTo(px+Math.sin(player.rotation.y)*10,py+Math.cos(player.rotation.y)*10);ctx.stroke();
+                ctx.strokeStyle='#D4AF37';ctx.lineWidth=2;ctx.strokeRect(0,0,sz,sz)}
+            renderer.render(scene,camera)})();
 
-        function loadCasinoModel(callback) {
-            const loader = new THREE.GLTFLoader();
-            
-            loader.load(
-                'https://raw.githubusercontent.com/Strawrfsa/famiglia-assets/main/harlem_casino%20.glb',
-                (gltf) => {
-                    casinoModel = gltf.scene;
-                    casinoModel.traverse((child) => {
-                        if (child.isMesh) {
-                            child.castShadow = true;
-                            child.receiveShadow = true;
-                        }
-                    });
-                    console.log('Casino loaded!');
-                    callback();
-                },
-                (xhr) => {
-                    const percent = (xhr.loaded / xhr.total) * 20 + 70;
-                    updateLoadingBar(percent);
-                },
-                (error) => {
-                    console.error('Casino load error:', error);
-                    callback();
-                }
-            );
-        }
-
-        function createCity() {
-            const groundMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
-            const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), groundMat);
-            ground.rotation.x = -Math.PI / 2;
-            ground.receiveShadow = true;
-            scene.add(ground);
-
-            const streetMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-            
-            for (let i = -2; i <= 2; i++) {
-                const street = new THREE.Mesh(new THREE.PlaneGeometry(80, 4), streetMat);
-                street.rotation.x = -Math.PI / 2;
-                street.position.set(0, 0.02, i * 15);
-                scene.add(street);
-
-                const line = new THREE.Mesh(new THREE.PlaneGeometry(80, 0.3), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
-                line.rotation.x = -Math.PI / 2;
-                line.position.set(0, 0.04, i * 15);
-                scene.add(line);
-            }
-
-            for (let i = -2; i <= 2; i++) {
-                const street = new THREE.Mesh(new THREE.PlaneGeometry(4, 80), streetMat);
-                street.rotation.x = -Math.PI / 2;
-                street.rotation.z = Math.PI / 2;
-                street.position.set(i * 15, 0.02, 0);
-                scene.add(street);
-
-                const line = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 80), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
-                line.rotation.x = -Math.PI / 2;
-                line.rotation.z = Math.PI / 2;
-                line.position.set(i * 15, 0.04, 0);
-                scene.add(line);
-            }
-
-            for (let x = -35; x <= 35; x += 20) {
-                for (let z = -35; z <= 35; z += 20) {
-                    if (Math.random() > 0.4) {
-                        const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 10, 8), new THREE.MeshLambertMaterial({ color: 0x2a2a2a }));
-                        lamp.position.set(x, 5, z);
-                        lamp.castShadow = true;
-                        scene.add(lamp);
-
-                        const head = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffdd88 }));
-                        head.position.set(x, 10.3, z);
-                        scene.add(head);
-
-                        const light = new THREE.PointLight(0xffdd88, 0.8, 20);
-                        light.position.set(x, 10, z);
-                        scene.add(light);
-                    }
-                }
-            }
-        }
-
-        function createPlayer() {
-            player = new THREE.Group();
-            
-            const suitMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
-            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 1.3, 12), suitMat);
-            body.position.y = 0.65;
-            body.castShadow = true;
-            player.add(body);
-
-            const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), new THREE.MeshLambertMaterial({ color: 0xffccaa }));
-            head.position.y = 1.6;
-            head.castShadow = true;
-            player.add(head);
-
-            const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.06, 16), new THREE.MeshLambertMaterial({ color: 0x0a0a0a }));
-            hatBrim.position.y = 1.75;
-            player.add(hatBrim);
-
-            const hatTop = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.35, 0.35, 16), new THREE.MeshLambertMaterial({ color: 0x0a0a0a }));
-            hatTop.position.y = 1.95;
-            player.add(hatTop);
-
-            const tie = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.55, 0.05), new THREE.MeshBasicMaterial({ color: 0xD4AF37 }));
-            tie.position.set(0, 0.85, 0.46);
-            player.add(tie);
-
-            [-0.17, 0.17].forEach(offset => {
-                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.85, 8), suitMat);
-                leg.position.set(offset, 0.42, 0);
-                leg.castShadow = true;
-                player.add(leg);
-
-                const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.12, 0.35), new THREE.MeshLambertMaterial({ color: 0x050505 }));
-                shoe.position.set(offset, 0, 0.06);
-                shoe.castShadow = true;
-                player.add(shoe);
-            });
-
-            player.position.set(0, 0, 0);
-            scene.add(player);
-
-            const marker = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.1, 32), new THREE.MeshBasicMaterial({ color: 0xD4AF37, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
-            marker.rotation.x = -Math.PI / 2;
-            marker.position.set(0, 0.05, 0);
-            scene.add(marker);
-            player.marker = marker;
-
-            const glow = new THREE.Mesh(new THREE.CircleGeometry(1.3, 32), new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.2, side: THREE.DoubleSide }));
-            glow.rotation.x = -Math.PI / 2;
-            glow.position.set(0, 0.03, 0);
-            scene.add(glow);
-            player.glow = glow;
-        }
-
-        function createProperties() {
-            const positions = [
-                { type: propertyTypes[0], x: -25, z: -25 },
-                { type: propertyTypes[1], x: 0, z: -25 },
-                { type: propertyTypes[2], x: 25, z: -25 },
-                { type: propertyTypes[3], x: -25, z: 0 },
-                { type: propertyTypes[4], x: 25, z: 0 },
-                { type: propertyTypes[5], x: -25, z: 25 },
-                { type: propertyTypes[6], x: 0, z: 25 },
-                { type: propertyTypes[7], x: 25, z: 25 },
-                { type: propertyTypes[8], x: -15, z: -10 },
-                { type: propertyTypes[9], x: 15, z: -10 },
-                { type: propertyTypes[10], x: -15, z: 10 },
-                { type: propertyTypes[11], x: 15, z: 10 }
-            ];
-
-            positions.forEach((pos, i) => properties.push(createBuilding(pos.x, pos.z, pos.type, i)));
-        }
-
-        function createBuilding(x, z, type, index) {
-            const group = new THREE.Group();
-            
-            if (type.use3DModel && casinoModel) {
-                const model = casinoModel.clone();
-                model.scale.set(3, 3, 3);
-                group.add(model);
-            } else {
-                const building = new THREE.Mesh(new THREE.BoxGeometry(7, type.height, 7), new THREE.MeshLambertMaterial({ color: type.color }));
-                building.position.y = type.height / 2;
-                building.castShadow = true;
-                group.add(building);
-
-                for (let floor = 0; floor < Math.floor(type.height / 2); floor++) {
-                    for (let col = 0; col < 3; col++) {
-                        if (Math.random() > 0.3) {
-                            const win = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1), new THREE.MeshBasicMaterial({ color: type.glowColor }));
-                            win.position.set((col - 1) * 2, type.height * 0.2 + floor * (type.height * 0.6 / Math.floor(type.height / 2)), 3.51);
-                            group.add(win);
-                        }
-                    }
-                }
-            }
-
-            const platform = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 0.3, 16), new THREE.MeshBasicMaterial({ color: type.glowColor, transparent: true, opacity: 0.7 }));
-            platform.position.y = 0.15;
-            group.add(platform);
-
-            const ring = new THREE.Mesh(new THREE.RingGeometry(4, 4.6, 16), new THREE.MeshBasicMaterial({ color: 0xD4AF37, side: THREE.DoubleSide, transparent: true, opacity: 0 }));
-            ring.rotation.x = -Math.PI / 2;
-            ring.position.y = 0.2;
-            group.add(ring);
-
-            const priceTag = new THREE.Mesh(new THREE.PlaneGeometry(4, 2), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
-            priceTag.position.y = type.use3DModel ? 12 : type.height + 2;
-            group.add(priceTag);
-
-            group.position.set(x, 0, z);
-            group.userData = { type, owned: false, platform, ring, priceTag, originalY: 0.15 };
-            
-            scene.add(group);
-            return group;
-        }
-
-        function setupControls() {
-            const canvas = document.getElementById('gameCanvas');
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2();
-
-            canvas.addEventListener('click', (e) => {
-                if (!gameActive) return;
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(mouse, camera);
-
-                const hits = raycaster.intersectObjects(properties, true);
-                if (hits.length > 0) {
-                    let prop = hits[0].object;
-                    while (prop.parent && !prop.parent.isScene) prop = prop.parent;
-                    if (!prop.userData.owned) {
-                        openShop(prop);
-                        return;
-                    }
-                }
-
-                const ground = raycaster.intersectObjects(scene.children.filter(o => o.geometry && o.geometry.type === 'PlaneGeometry'));
-                if (ground.length > 0) {
-                    targetPosition = { x: ground[0].point.x, z: ground[0].point.z };
-                    isMoving = true;
-                }
-            });
-
-            canvas.addEventListener('mousemove', (e) => {
-                if (!gameActive) return;
-                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
-                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(mouse, camera);
-                
-                const hits = raycaster.intersectObjects(properties, true);
-                properties.forEach(p => {
-                    if (!p.userData.owned) {
-                        p.userData.ring.material.opacity = 0;
-                        p.userData.platform.position.y = p.userData.originalY;
-                    }
-                });
-
-                if (hits.length > 0) {
-                    let prop = hits[0].object;
-                    while (prop.parent && !prop.parent.isScene) prop = prop.parent;
-                    if (!prop.userData.owned) {
-                        canvas.style.cursor = 'pointer';
-                        prop.userData.ring.material.opacity = 0.8;
-                        prop.userData.platform.position.y = prop.userData.originalY + 0.3;
-                    }
-                } else {
-                    canvas.style.cursor = 'default';
-                }
-            });
-        }
-
-        function openShop(prop) {
-            selectedProperty = prop;
-            const d = prop.userData.type;
-            document.getElementById('shopTitle').textContent = d.name;
-            document.getElementById('shopDescription').textContent = d.description;
-            document.getElementById('shopPrice').textContent = d.price.toLocaleString();
-            document.getElementById('shopIncome').textContent = d.income.toLocaleString();
-            document.getElementById('propertyShop').style.display = 'block';
-        }
-
-        function closeShop() {
-            document.getElementById('propertyShop').style.display = 'none';
-            selectedProperty = null;
-        }
-
-        function buyProperty() {
-            if (!selectedProperty) return;
-            const d = selectedProperty.userData.type;
-            if (playerMoney >= d.price) {
-                playerMoney -= d.price;
-                selectedProperty.userData.owned = true;
-                selectedProperty.userData.platform.material.color.setHex(0xD4AF37);
-                updateUI();
-                closeShop();
-            } else {
-                alert('Not enough money!');
-            }
-        }
-
-        function updateUI() {
-            document.getElementById('playerMoney').textContent = playerMoney.toLocaleString();
-            document.getElementById('propertyCount').textContent = properties.filter(p => p.userData.owned).length;
-            document.getElementById('incomePerHour').textContent = properties.filter(p => p.userData.owned).reduce((s, p) => s + p.userData.type.income, 0).toLocaleString();
-        }
-
-        function updateMinimap() {
-            const c = document.getElementById('minimap');
-            if (!c) return;
-            const ctx = c.getContext('2d');
-            const s = 200, m = 80;
-            
-            ctx.fillStyle = '#0a0a0a';
-            ctx.fillRect(0, 0, s, s);
-            
-            properties.forEach(p => {
-                const x = ((p.position.x + m/2) / m) * s;
-                const y = ((p.position.z + m/2) / m) * s;
-                ctx.fillStyle = p.userData.owned ? '#D4AF37' : '#' + p.userData.type.glowColor.toString(16).padStart(6, '0');
-                ctx.fillRect(x - 3, y - 3, 6, 6);
-            });
-            
-            const px = ((player.position.x + m/2) / m) * s;
-            const py = ((player.position.z + m/2) / m) * s;
-            ctx.fillStyle = '#D4AF37';
-            ctx.beginPath();
-            ctx.arc(px, py, 5, 0, Math.PI * 2);
-            ctx.fill();
-            
-            ctx.strokeStyle = '#D4AF37';
-            ctx.lineWidth = 2;
-            ctx.strokeRect(0, 0, s, s);
-        }
-
-        function animate() {
-            if (!gameActive) return;
-            requestAnimationFrame(animate);
-
-            const time = Date.now() * 0.001;
-
-            if (isMoving && targetPosition) {
-                const dx = targetPosition.x - player.position.x;
-                const dz = targetPosition.z - player.position.z;
-                const dist = Math.sqrt(dx * dx + dz * dz);
-
-                if (dist > 0.5) {
-                    const speed = 0.12;
-                    player.position.x += (dx / dist) * speed;
-                    player.position.z += (dz / dist) * speed;
-                    player.marker.position.set(player.position.x, 0.05, player.position.z);
-                    player.glow.position.set(player.position.x, 0.03, player.position.z);
-                    player.rotation.y = Math.atan2(dx, dz);
-                    player.position.y = Math.sin(time * 6) * 0.08;
-                } else {
-                    isMoving = false;
-                    player.position.y = 0;
-                }
-            }
-
-            camera.position.x += (player.position.x - camera.position.x) * 0.05;
-            camera.position.z += (player.position.z + 30 - camera.position.z) * 0.05;
-            camera.lookAt(player.position.x, 0, player.position.z);
-
-            properties.forEach((p, i) => {
-                if (!p.userData.owned) {
-                    p.userData.platform.rotation.y = time + i;
-                    const baseY = p.userData.type.use3DModel ? 12 : p.userData.type.height + 2;
-                    p.userData.priceTag.position.y = baseY + Math.sin(time * 2) * 0.3;
-                    p.userData.priceTag.rotation.y = time * 0.5;
-                    p.userData.platform.material.opacity = 0.5 + ((Math.sin(time * 2 + i) + 1) / 2) * 0.2;
-                }
-            });
-
-            updateMinimap();
-            renderer.render(scene, camera);
-        }
-
-        function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-
-        setInterval(() => {
-            if (gameActive) {
-                const income = properties.filter(p => p.userData.owned).reduce((s, p) => s + p.userData.type.income, 0);
-                if (income > 0) {
-                    playerMoney += income / 3600;
-                    updateUI();
-                }
-            }
-        }, 1000);
+        window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+        setInterval(()=>{if(gameActive&&casinos.length>0){money+=(casinos.length*INCOME)/3600;updateUI()}},1000);
+    });
     </script>
 </body>
 </html>
