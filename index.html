@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAMIGLIA - Mafia Empire on Solana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Cinzel:wght@400;600;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blood-red: #8B0000;
+            --gold: #D4AF37;
+            --dark-gold: #9B7E2B;
+            --cream: #F5E6D3;
+            --black: #0A0A0A;
+            --grey: #1A1A1A;
+            --smoke: #2A2A2A;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background: var(--black);
+            color: var(--cream);
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: overlay;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s;
+        }
+
+        #loadingScreen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-logo {
+            font-family: 'Pirata One', cursive;
+            font-size: 4rem;
+            color: var(--gold);
+            text-shadow: 3px 3px 0 var(--blood-red);
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .loading-text {
+            font-family: 'Cinzel', serif;
+            color: var(--cream);
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        .loading-bar {
+            width: 400px;
+            height: 8px;
+            background: var(--grey);
+            border: 2px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold), var(--blood-red));
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .loading-percent {
+            margin-top: 10px;
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 1rem;
+        }
+
+        .wallet-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(26,26,26,0.98);
+            padding: 40px;
+            border: 3px solid var(--gold);
+            z-index: 10001;
+            min-width: 400px;
+        }
+
+        .wallet-modal.active { display: block; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+        }
+
+        .modal-overlay.active { display: block; }
+
+        .wallet-modal h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .wallet-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .wallet-btn {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, var(--smoke) 0%, var(--grey) 100%);
+            color: var(--cream);
+            border: 2px solid var(--gold);
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .wallet-btn:hover {
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
+            transform: translateX(5px);
+        }
+
+        .wallet-icon { font-size: 1.5rem; }
+        .wallet-status {
+            color: var(--gold);
+            font-size: 0.9rem;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .close-modal {
+            font-family: 'Cinzel', serif;
+            background: transparent;
+            color: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .close-modal:hover {
+            background: var(--blood-red);
+            border-color: var(--blood-red);
+        }
+
+        .top-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 15px;
+            z-index: 10000;
+        }
+
+        .top-btn {
+            font-family: 'Cinzel', serif;
+            background: linear-gradient(135deg, var(--gold), var(--dark-gold));
+            color: var(--black);
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+        }
+
+        .top-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(212,175,55,0.4);
+        }
+
+        .wallet-connected {
+            background: linear-gradient(135deg, var(--blood-red), #A00000);
+            color: var(--gold);
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen">
+        <div class="loading-logo">FAMIGLIA</div>
+        <div class="loading-text">LOADING EMPIRE...</div>
+        <div class="loading-bar">
+            <div class="loading-fill" id="loadingFill"></div>
+        </div>
+        <div class="loading-percent" id="loadingPercent">0%</div>
+    </div>
+
+    <div class="top-buttons">
+        <button class="top-btn" id="walletBtn" onclick="openWalletModal()">CONNECT WALLET</button>
+        <button class="top-btn" onclick="window.open('docs.html', '_blank')">DOCS</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeWalletModal()"></div>
+    <div class="wallet-modal" id="walletModal">
+        <h3>CONNECT WALLET</h3>
+        <div class="wallet-options">
+            <button class="wallet-btn" onclick="connectWallet('phantom')">
+                <span class="wallet-icon">👻</span><span>Phantom</span>
+            </button>
+            <button class="wallet-btn" onclick="connectWallet('solflare')">
+                <span class="wallet-icon">🔥</span><span>Solflare</span>
+            </button>
+            <button class="wallet-btn" onclick="connectWallet('backpack')">
+                <span class="wallet-icon">🎒</span><span>Backpack</span>
+            </button>
+            <button class="wallet-btn" onclick="connectWallet('glow')">
+                <span class="wallet-icon">✨</span><span>Glow</span>
+            </button>
+            <button class="wallet-btn" onclick="connectWallet('trust')">
+                <span class="wallet-icon">🛡️</span><span>Trust Wallet</span>
+            </button>
+            <button class="wallet-btn" onclick="connectWallet('coinbase')">
+                <span class="wallet-icon">🔷</span><span>Coinbase Wallet</span>
+            </button>
+        </div>
+        <div class="wallet-status" id="walletStatus"></div>
+        <button class="close-modal" onclick="closeWalletModal()">CLOSE</button>
+    </div>
+
+    <div id="gameContainer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div id="gameUI" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+            <div style="position: absolute; top: 20px; left: 20px; background: rgba(26,26,26,0.95); padding: 20px; border: 2px solid var(--gold); pointer-events: auto;">
+                <div style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 1.2rem; margin-bottom: 10px;">YOUR EMPIRE</div>
+                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">💰 Money: $<span id="playerMoney">50000</span></div>
+                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">🏢 Properties: <span id="propertyCount">0</span></div>
+                <div style="color: var(--cream); font-size: 1rem; margin: 5px 0;">💵 Income/h: $<span id="incomePerHour">0</span></div>
+            </div>
+
+            <div id="propertyShop" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(26,26,26,0.98); padding: 40px; border: 3px solid var(--gold); pointer-events: auto; min-width: 400px;">
+                <h3 style="font-family: 'Cinzel', serif; color: var(--gold); font-size: 2rem; margin-bottom: 20px; text-align: center;" id="shopTitle"></h3>
+                <div style="color: var(--cream); margin-bottom: 20px; line-height: 1.6;" id="shopDescription"></div>
+                <div style="color: var(--gold); font-size: 1.3rem; margin-bottom: 10px;">💰 Price: $<span id="shopPrice"></span></div>
+                <div style="color: var(--gold); font-size: 1.1rem; margin-bottom: 30px;">💵 Income: $<span id="shopIncome"></span>/hour</div>
+                <div style="display: flex; gap: 20px; justify-content: center;">
+                    <button onclick="buyProperty()" style="font-family: 'Cinzel', serif; background: var(--blood-red); color: var(--gold); border: none; padding: 15px 30px; font-size: 1.1rem; cursor: pointer; font-weight: 600; letter-spacing: 2px;">BUY NOW</button>
+                    <button onclick="closeShop()" style="font-family: 'Cinzel', serif; background: transparent; color: var(--gold); border: 2px solid var(--gold); padding: 15px 30px; font-size: 1.1rem; cursor: pointer; font-weight: 600; letter-spacing: 2px;">CANCEL</button>
+                </div>
+            </div>
+
+            <div style="position: absolute; bottom: 20px; right: 20px; width: 200px; height: 200px; background: rgba(26,26,26,0.95); border: 3px solid var(--gold); pointer-events: auto;">
+                <canvas id="minimap" width="200" height="200" style="display: block;"></canvas>
+                <div style="position: absolute; top: 5px; left: 50%; transform: translateX(-50%); color: var(--gold); font-size: 0.8rem; font-family: 'Cinzel', serif;">MAP</div>
+            </div>
+
+            <div style="position: absolute; bottom: 230px; right: 20px; background: rgba(26,26,26,0.9); padding: 10px 15px; border: 2px solid var(--gold); color: var(--cream); font-size: 0.85rem; max-width: 200px;">
+                <div style="color: var(--gold); font-family: 'Cinzel', serif; margin-bottom: 5px; font-size: 0.9rem;">CONTROLS</div>
+                <div>🖱️ Click: Move & Buy</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+        let gameActive = false;
+        let scene, camera, renderer, player;
+        let playerMoney = 50000;
+        let properties = [];
+        let selectedProperty = null;
+        let targetPosition = null;
+        let isMoving = false;
+        let connectedWallet = null;
+        let casinoModel = null;
+
+        function updateLoadingBar(percent) {
+            document.getElementById('loadingFill').style.width = percent + '%';
+            document.getElementById('loadingPercent').textContent = Math.floor(percent) + '%';
+        }
+
+        function hideLoadingScreen() {
+            const screen = document.getElementById('loadingScreen');
+            screen.classList.add('hidden');
+            setTimeout(() => screen.style.display = 'none', 500);
+        }
+
+        function openWalletModal() {
+            document.getElementById('walletModal').classList.add('active');
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        function connectWallet(walletType) {
+            const walletBtn = document.getElementById('walletBtn');
+            const statusDiv = document.getElementById('walletStatus');
+            statusDiv.textContent = `Connecting to ${walletType}...`;
+            
+            setTimeout(() => {
+                const address = 'SOL' + Math.random().toString(36).substring(2, 15);
+                statusDiv.textContent = `Connected: ${address}`;
+                walletBtn.textContent = `${address.substring(0, 4)}...${address.substring(address.length - 4)}`;
+                walletBtn.classList.add('wallet-connected');
+                setTimeout(() => closeWalletModal(), 1500);
+            }, 1000);
+        }
+
+        const propertyTypes = [
+            { name: '🎰 Harlem Casino', price: 25000, income: 500, emoji: '🎰', description: 'High-class casino.', color: 0x8B0000, glowColor: 0xff0000, height: 8, style: 'casino', use3DModel: true },
+            { name: '🎭 Grand Theater', price: 35000, income: 700, emoji: '🎭', description: 'Upscale theater.', color: 0x4B0082, glowColor: 0x9370DB, height: 12, style: 'theater' },
+            { name: '🍸 Velvet Lounge', price: 15000, income: 300, emoji: '🍸', description: 'Cocktail bar.', color: 0x0a1a2a, glowColor: 0x00CED1, height: 6, style: 'lounge' },
+            { name: '💃 Pink Paradise', price: 30000, income: 600, emoji: '💃', description: 'Club.', color: 0x4A0E4E, glowColor: 0xFF1493, height: 7, style: 'stripclub' },
+            { name: '🏪 Corner Store', price: 8000, income: 150, emoji: '🏪', description: 'Store.', color: 0x2a2a1a, glowColor: 0xFFFF00, height: 5, style: 'store' },
+            { name: '🏨 Grand Hotel', price: 50000, income: 1000, emoji: '🏨', description: 'Luxury hotel.', color: 0x1a1510, glowColor: 0xFFD700, height: 15, style: 'hotel' },
+            { name: '🎬 Cinema', price: 28000, income: 550, emoji: '🎬', description: 'Cinema.', color: 0x1a0a1a, glowColor: 0xFF00FF, height: 10, style: 'cinema' },
+            { name: '🍕 Pizza Joint', price: 12000, income: 250, emoji: '🍕', description: 'Restaurant.', color: 0x2a1a0a, glowColor: 0xFF6347, height: 6, style: 'restaurant' },
+            { name: '💈 Barber Shop', price: 6000, income: 100, emoji: '💈', description: 'Barbershop.', color: 0x1a1a2a, glowColor: 0xFF0000, height: 5, style: 'barber' },
+            { name: '⛽ Gas Station', price: 20000, income: 400, emoji: '⛽', description: 'Gas station.', color: 0x2a2a2a, glowColor: 0x00FF00, height: 4, style: 'gas' },
+            { name: '🎪 Night Club', price: 32000, income: 650, emoji: '🎪', description: 'Club.', color: 0x0a0a2a, glowColor: 0x00FFFF, height: 8, style: 'nightclub' },
+            { name: '🏦 Pawn Shop', price: 18000, income: 350, emoji: '🏦', description: 'Pawn shop.', color: 0x2a2a0a, glowColor: 0xFFD700, height: 5, style: 'pawn' }
+        ];
+
+        window.addEventListener('load', () => {
+            updateLoadingBar(10);
+            initGame();
+        });
+
+        function initGame() {
+            const canvas = document.getElementById('gameCanvas');
+            
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a0a);
+            scene.fog = new THREE.Fog(0x0a0a0a, 50, 100);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(0, 40, 30);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.BasicShadowMap;
+
+            updateLoadingBar(30);
+
+            const ambientLight = new THREE.AmbientLight(0xffd700, 0.4);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffd700, 0.8);
+            directionalLight.position.set(10, 30, 10);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 1024;
+            directionalLight.shadow.mapSize.height = 1024;
+            scene.add(directionalLight);
+
+            updateLoadingBar(50);
+
+            createCity();
+            createPlayer();
+            
+            updateLoadingBar(70);
+
+            loadCasinoModel(() => {
+                updateLoadingBar(90);
+                createProperties();
+                updateLoadingBar(100);
+                
+                setTimeout(() => {
+                    hideLoadingScreen();
+                    gameActive = true;
+                    animate();
+                }, 500);
+            });
+
+            setupControls();
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function loadCasinoModel(callback) {
+            const loader = new THREE.GLTFLoader();
+            
+            loader.load(
+                'https://raw.githubusercontent.com/Strawrfsa/famiglia-assets/main/harlem_casino%20.glb',
+                (gltf) => {
+                    casinoModel = gltf.scene;
+                    casinoModel.traverse((child) => {
+                        if (child.isMesh) {
+                            child.castShadow = true;
+                            child.receiveShadow = true;
+                        }
+                    });
+                    console.log('Casino loaded!');
+                    callback();
+                },
+                (xhr) => {
+                    const percent = (xhr.loaded / xhr.total) * 20 + 70;
+                    updateLoadingBar(percent);
+                },
+                (error) => {
+                    console.error('Casino load error:', error);
+                    callback();
+                }
+            );
+        }
+
+        function createCity() {
+            const groundMat = new THREE.MeshLambertMaterial({ color: 0x2a2a2a });
+            const ground = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), groundMat);
+            ground.rotation.x = -Math.PI / 2;
+            ground.receiveShadow = true;
+            scene.add(ground);
+
+            const streetMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+            
+            for (let i = -2; i <= 2; i++) {
+                const street = new THREE.Mesh(new THREE.PlaneGeometry(80, 4), streetMat);
+                street.rotation.x = -Math.PI / 2;
+                street.position.set(0, 0.02, i * 15);
+                scene.add(street);
+
+                const line = new THREE.Mesh(new THREE.PlaneGeometry(80, 0.3), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
+                line.rotation.x = -Math.PI / 2;
+                line.position.set(0, 0.04, i * 15);
+                scene.add(line);
+            }
+
+            for (let i = -2; i <= 2; i++) {
+                const street = new THREE.Mesh(new THREE.PlaneGeometry(4, 80), streetMat);
+                street.rotation.x = -Math.PI / 2;
+                street.rotation.z = Math.PI / 2;
+                street.position.set(i * 15, 0.02, 0);
+                scene.add(street);
+
+                const line = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 80), new THREE.MeshBasicMaterial({ color: 0xffff00 }));
+                line.rotation.x = -Math.PI / 2;
+                line.rotation.z = Math.PI / 2;
+                line.position.set(i * 15, 0.04, 0);
+                scene.add(line);
+            }
+
+            for (let x = -35; x <= 35; x += 20) {
+                for (let z = -35; z <= 35; z += 20) {
+                    if (Math.random() > 0.4) {
+                        const lamp = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 10, 8), new THREE.MeshLambertMaterial({ color: 0x2a2a2a }));
+                        lamp.position.set(x, 5, z);
+                        lamp.castShadow = true;
+                        scene.add(lamp);
+
+                        const head = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffdd88 }));
+                        head.position.set(x, 10.3, z);
+                        scene.add(head);
+
+                        const light = new THREE.PointLight(0xffdd88, 0.8, 20);
+                        light.position.set(x, 10, z);
+                        scene.add(light);
+                    }
+                }
+            }
+        }
+
+        function createPlayer() {
+            player = new THREE.Group();
+            
+            const suitMat = new THREE.MeshLambertMaterial({ color: 0x0a0a0a });
+            const body = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.5, 1.3, 12), suitMat);
+            body.position.y = 0.65;
+            body.castShadow = true;
+            player.add(body);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), new THREE.MeshLambertMaterial({ color: 0xffccaa }));
+            head.position.y = 1.6;
+            head.castShadow = true;
+            player.add(head);
+
+            const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.06, 16), new THREE.MeshLambertMaterial({ color: 0x0a0a0a }));
+            hatBrim.position.y = 1.75;
+            player.add(hatBrim);
+
+            const hatTop = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.35, 0.35, 16), new THREE.MeshLambertMaterial({ color: 0x0a0a0a }));
+            hatTop.position.y = 1.95;
+            player.add(hatTop);
+
+            const tie = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.55, 0.05), new THREE.MeshBasicMaterial({ color: 0xD4AF37 }));
+            tie.position.set(0, 0.85, 0.46);
+            player.add(tie);
+
+            [-0.17, 0.17].forEach(offset => {
+                const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.85, 8), suitMat);
+                leg.position.set(offset, 0.42, 0);
+                leg.castShadow = true;
+                player.add(leg);
+
+                const shoe = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.12, 0.35), new THREE.MeshLambertMaterial({ color: 0x050505 }));
+                shoe.position.set(offset, 0, 0.06);
+                shoe.castShadow = true;
+                player.add(shoe);
+            });
+
+            player.position.set(0, 0, 0);
+            scene.add(player);
+
+            const marker = new THREE.Mesh(new THREE.RingGeometry(0.9, 1.1, 32), new THREE.MeshBasicMaterial({ color: 0xD4AF37, side: THREE.DoubleSide, transparent: true, opacity: 0.7 }));
+            marker.rotation.x = -Math.PI / 2;
+            marker.position.set(0, 0.05, 0);
+            scene.add(marker);
+            player.marker = marker;
+
+            const glow = new THREE.Mesh(new THREE.CircleGeometry(1.3, 32), new THREE.MeshBasicMaterial({ color: 0xD4AF37, transparent: true, opacity: 0.2, side: THREE.DoubleSide }));
+            glow.rotation.x = -Math.PI / 2;
+            glow.position.set(0, 0.03, 0);
+            scene.add(glow);
+            player.glow = glow;
+        }
+
+        function createProperties() {
+            const positions = [
+                { type: propertyTypes[0], x: -25, z: -25 },
+                { type: propertyTypes[1], x: 0, z: -25 },
+                { type: propertyTypes[2], x: 25, z: -25 },
+                { type: propertyTypes[3], x: -25, z: 0 },
+                { type: propertyTypes[4], x: 25, z: 0 },
+                { type: propertyTypes[5], x: -25, z: 25 },
+                { type: propertyTypes[6], x: 0, z: 25 },
+                { type: propertyTypes[7], x: 25, z: 25 },
+                { type: propertyTypes[8], x: -15, z: -10 },
+                { type: propertyTypes[9], x: 15, z: -10 },
+                { type: propertyTypes[10], x: -15, z: 10 },
+                { type: propertyTypes[11], x: 15, z: 10 }
+            ];
+
+            positions.forEach((pos, i) => properties.push(createBuilding(pos.x, pos.z, pos.type, i)));
+        }
+
+        function createBuilding(x, z, type, index) {
+            const group = new THREE.Group();
+            
+            if (type.use3DModel && casinoModel) {
+                const model = casinoModel.clone();
+                model.scale.set(3, 3, 3);
+                group.add(model);
+            } else {
+                const building = new THREE.Mesh(new THREE.BoxGeometry(7, type.height, 7), new THREE.MeshLambertMaterial({ color: type.color }));
+                building.position.y = type.height / 2;
+                building.castShadow = true;
+                group.add(building);
+
+                for (let floor = 0; floor < Math.floor(type.height / 2); floor++) {
+                    for (let col = 0; col < 3; col++) {
+                        if (Math.random() > 0.3) {
+                            const win = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 1), new THREE.MeshBasicMaterial({ color: type.glowColor }));
+                            win.position.set((col - 1) * 2, type.height * 0.2 + floor * (type.height * 0.6 / Math.floor(type.height / 2)), 3.51);
+                            group.add(win);
+                        }
+                    }
+                }
+            }
+
+            const platform = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 0.3, 16), new THREE.MeshBasicMaterial({ color: type.glowColor, transparent: true, opacity: 0.7 }));
+            platform.position.y = 0.15;
+            group.add(platform);
+
+            const ring = new THREE.Mesh(new THREE.RingGeometry(4, 4.6, 16), new THREE.MeshBasicMaterial({ color: 0xD4AF37, side: THREE.DoubleSide, transparent: true, opacity: 0 }));
+            ring.rotation.x = -Math.PI / 2;
+            ring.position.y = 0.2;
+            group.add(ring);
+
+            const priceTag = new THREE.Mesh(new THREE.PlaneGeometry(4, 2), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+            priceTag.position.y = type.use3DModel ? 12 : type.height + 2;
+            group.add(priceTag);
+
+            group.position.set(x, 0, z);
+            group.userData = { type, owned: false, platform, ring, priceTag, originalY: 0.15 };
+            
+            scene.add(group);
+            return group;
+        }
+
+        function setupControls() {
+            const canvas = document.getElementById('gameCanvas');
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+
+            canvas.addEventListener('click', (e) => {
+                if (!gameActive) return;
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+
+                const hits = raycaster.intersectObjects(properties, true);
+                if (hits.length > 0) {
+                    let prop = hits[0].object;
+                    while (prop.parent && !prop.parent.isScene) prop = prop.parent;
+                    if (!prop.userData.owned) {
+                        openShop(prop);
+                        return;
+                    }
+                }
+
+                const ground = raycaster.intersectObjects(scene.children.filter(o => o.geometry && o.geometry.type === 'PlaneGeometry'));
+                if (ground.length > 0) {
+                    targetPosition = { x: ground[0].point.x, z: ground[0].point.z };
+                    isMoving = true;
+                }
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!gameActive) return;
+                mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                
+                const hits = raycaster.intersectObjects(properties, true);
+                properties.forEach(p => {
+                    if (!p.userData.owned) {
+                        p.userData.ring.material.opacity = 0;
+                        p.userData.platform.position.y = p.userData.originalY;
+                    }
+                });
+
+                if (hits.length > 0) {
+                    let prop = hits[0].object;
+                    while (prop.parent && !prop.parent.isScene) prop = prop.parent;
+                    if (!prop.userData.owned) {
+                        canvas.style.cursor = 'pointer';
+                        prop.userData.ring.material.opacity = 0.8;
+                        prop.userData.platform.position.y = prop.userData.originalY + 0.3;
+                    }
+                } else {
+                    canvas.style.cursor = 'default';
+                }
+            });
+        }
+
+        function openShop(prop) {
+            selectedProperty = prop;
+            const d = prop.userData.type;
+            document.getElementById('shopTitle').textContent = d.name;
+            document.getElementById('shopDescription').textContent = d.description;
+            document.getElementById('shopPrice').textContent = d.price.toLocaleString();
+            document.getElementById('shopIncome').textContent = d.income.toLocaleString();
+            document.getElementById('propertyShop').style.display = 'block';
+        }
+
+        function closeShop() {
+            document.getElementById('propertyShop').style.display = 'none';
+            selectedProperty = null;
+        }
+
+        function buyProperty() {
+            if (!selectedProperty) return;
+            const d = selectedProperty.userData.type;
+            if (playerMoney >= d.price) {
+                playerMoney -= d.price;
+                selectedProperty.userData.owned = true;
+                selectedProperty.userData.platform.material.color.setHex(0xD4AF37);
+                updateUI();
+                closeShop();
+            } else {
+                alert('Not enough money!');
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('playerMoney').textContent = playerMoney.toLocaleString();
+            document.getElementById('propertyCount').textContent = properties.filter(p => p.userData.owned).length;
+            document.getElementById('incomePerHour').textContent = properties.filter(p => p.userData.owned).reduce((s, p) => s + p.userData.type.income, 0).toLocaleString();
+        }
+
+        function updateMinimap() {
+            const c = document.getElementById('minimap');
+            if (!c) return;
+            const ctx = c.getContext('2d');
+            const s = 200, m = 80;
+            
+            ctx.fillStyle = '#0a0a0a';
+            ctx.fillRect(0, 0, s, s);
+            
+            properties.forEach(p => {
+                const x = ((p.position.x + m/2) / m) * s;
+                const y = ((p.position.z + m/2) / m) * s;
+                ctx.fillStyle = p.userData.owned ? '#D4AF37' : '#' + p.userData.type.glowColor.toString(16).padStart(6, '0');
+                ctx.fillRect(x - 3, y - 3, 6, 6);
+            });
+            
+            const px = ((player.position.x + m/2) / m) * s;
+            const py = ((player.position.z + m/2) / m) * s;
+            ctx.fillStyle = '#D4AF37';
+            ctx.beginPath();
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.strokeStyle = '#D4AF37';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, 0, s, s);
+        }
+
+        function animate() {
+            if (!gameActive) return;
+            requestAnimationFrame(animate);
+
+            const time = Date.now() * 0.001;
+
+            if (isMoving && targetPosition) {
+                const dx = targetPosition.x - player.position.x;
+                const dz = targetPosition.z - player.position.z;
+                const dist = Math.sqrt(dx * dx + dz * dz);
+
+                if (dist > 0.5) {
+                    const speed = 0.12;
+                    player.position.x += (dx / dist) * speed;
+                    player.position.z += (dz / dist) * speed;
+                    player.marker.position.set(player.position.x, 0.05, player.position.z);
+                    player.glow.position.set(player.position.x, 0.03, player.position.z);
+                    player.rotation.y = Math.atan2(dx, dz);
+                    player.position.y = Math.sin(time * 6) * 0.08;
+                } else {
+                    isMoving = false;
+                    player.position.y = 0;
+                }
+            }
+
+            camera.position.x += (player.position.x - camera.position.x) * 0.05;
+            camera.position.z += (player.position.z + 30 - camera.position.z) * 0.05;
+            camera.lookAt(player.position.x, 0, player.position.z);
+
+            properties.forEach((p, i) => {
+                if (!p.userData.owned) {
+                    p.userData.platform.rotation.y = time + i;
+                    const baseY = p.userData.type.use3DModel ? 12 : p.userData.type.height + 2;
+                    p.userData.priceTag.position.y = baseY + Math.sin(time * 2) * 0.3;
+                    p.userData.priceTag.rotation.y = time * 0.5;
+                    p.userData.platform.material.opacity = 0.5 + ((Math.sin(time * 2 + i) + 1) / 2) * 0.2;
+                }
+            });
+
+            updateMinimap();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        setInterval(() => {
+            if (gameActive) {
+                const income = properties.filter(p => p.userData.owned).reduce((s, p) => s + p.userData.type.income, 0);
+                if (income > 0) {
+                    playerMoney += income / 3600;
+                    updateUI();
+                }
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
